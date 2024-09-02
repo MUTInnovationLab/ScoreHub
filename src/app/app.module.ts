@@ -5,6 +5,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+// import { NgChartsModule } from 'ng2-charts';  // Import NgChartsModule
+// import { RankPage } from './rank/rank.page';
 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
@@ -21,7 +23,8 @@ import { AngularFireModule } from '@angular/fire/compat';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    // NgChartsModule,  // Add NgChartsModule here
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
