@@ -1,14 +1,14 @@
+
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms'; // Ensure this import
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from '../environments/environment'; // Ensure this path is correct
-
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
+import { RouteReuseStrategy } from '@angular/router';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,11 +16,13 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    ReactiveFormsModule, // Ensure ReactiveFormsModule is included
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
+    AngularFireAuthModule,
+    AngularFirestoreModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
-  bootstrap: [AppComponent],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

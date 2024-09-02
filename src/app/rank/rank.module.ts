@@ -36,3 +36,4 @@ import { RankPage } from './rank.page';
   declarations: [RankPage],
 })
 export class RankPageModule {}
+
