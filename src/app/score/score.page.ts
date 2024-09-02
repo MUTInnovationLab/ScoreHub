@@ -2,17 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AuthService } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
-import { GroupService } from '../services/group.service'; // Import the GroupService
-
-interface UserData {
-  name?: string;
-}
-
-interface GroupData {
-  id: string;
-  groupName?: string;
-  description?: string;
-}
+import { GroupService, Group } from '../services/group.service';
 
 @Component({
   selector: 'app-score',
@@ -20,74 +10,44 @@ interface GroupData {
   styleUrls: ['./score.page.scss'],
 })
 export class ScorePage implements OnInit {
+
   businessPlanScore: number | null = null;
   marketingPlanScore: number | null = null;
   webPageScore: number | null = null;
   selectedGroupId: string = '';
-  markerId: string = '';
-  markerName: string = 'Unknown';
-  groups: Array<GroupData> = [];
+  groups: Group[] = [];
   newGroupName: string = '';
   newGroupDescription: string = '';
   updateGroupId: string = '';
   updateGroupName: string = '';
   updateGroupDescription: string = '';
   deleteGroupId: string = '';
+  loading: boolean = false;
 
   constructor(
     private firestore: AngularFirestore,
     private authService: AuthService,
-    private groupService: GroupService, // Inject GroupService
+    private groupService: GroupService,
     private toastController: ToastController
   ) {}
 
-  async ngOnInit() {
-    try {
-      const userId = await this.authService.getUserId();
-      if (userId) {
-        this.markerId = userId;
-        await this.loadMarkerDetails();
-        await this.loadGroups();
-      } else {
-        this.presentToast('Unable to retrieve user ID', 'danger');
-      }
-    } catch (error) {
-      console.error('Initialization error:', error);
-      this.presentToast('Error initializing page', 'danger');
-    }
+  ngOnInit() {
+    this.loadGroups();
   }
 
-  async loadMarkerDetails() {
-    try {
-      const userDocSnapshot = await this.firestore.collection('Users').doc(this.markerId).get().toPromise();
-      if (userDocSnapshot?.exists) {
-        const userData = userDocSnapshot.data() as UserData;
-        this.markerName = userData.name || 'Unknown';
-      } else {
-        this.markerName = 'Unknown';
+  loadGroups() {
+    this.loading = true;
+    this.groupService.getGroups().subscribe(
+      (groups) => {
+        this.groups = groups;
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error fetching groups:', error);
+        this.presentToast('Error loading groups', 'danger');
+        this.loading = false;
       }
-    } catch (error) {
-      console.error('Error fetching marker details:', error);
-      this.presentToast('Error loading marker details', 'danger');
-    }
-  }
-
-  async loadGroups() {
-    try {
-      const groupsSnapshot = await this.groupService.getGroups().toPromise();
-      if (groupsSnapshot && groupsSnapshot.length > 0) {
-        this.groups = groupsSnapshot.map(group => ({
-          id: group.id,
-          groupName: group.groupName || 'Unnamed Group'
-        }));
-      } else {
-        this.presentToast('No groups found', 'warning');
-        this.groups = [];
-      }
-    } catch (error) {
-      console.error('Error fetching groups:', error);
-      this.presentToast('Error loading groups', 'danger');
-    }
+    );
   }
 
   async submitScores() {
@@ -95,17 +55,22 @@ export class ScorePage implements OnInit {
       this.presentToast('Please fill out all fields', 'danger');
       return;
     }
-
+  
+    // Find the selected group name based on the selectedGroupId
+    const selectedGroup = this.groups.find(group => group.id === this.selectedGroupId);
+    if (!selectedGroup) {
+      this.presentToast('Group not found', 'danger');
+      return;
+    }
+  
     const scores = {
-      groupId: this.selectedGroupId,
-      markerId: this.markerId,
-      markerName: this.markerName,
+      groupName: selectedGroup.groupName, // Use the group name instead of the ID
       businessPlanScore: this.businessPlanScore,
       marketingPlanScore: this.marketingPlanScore,
       webPageScore: this.webPageScore,
       timestamp: new Date(),
     };
-
+  
     try {
       await this.firestore.collection('Marking').add(scores);
       this.presentToast('Scores submitted successfully!', 'success');
@@ -115,6 +80,7 @@ export class ScorePage implements OnInit {
       this.presentToast('Error submitting scores', 'danger');
     }
   }
+  
 
   async addGroup() {
     if (!this.newGroupName) {
@@ -130,7 +96,7 @@ export class ScorePage implements OnInit {
       this.presentToast('Group added successfully!', 'success');
       this.newGroupName = '';
       this.newGroupDescription = '';
-      await this.loadGroups(); // Reload groups to reflect changes
+      this.loadGroups();
     } catch (error) {
       console.error('Error adding group:', error);
       this.presentToast('Error adding group', 'danger');
@@ -152,7 +118,7 @@ export class ScorePage implements OnInit {
       this.updateGroupId = '';
       this.updateGroupName = '';
       this.updateGroupDescription = '';
-      await this.loadGroups(); // Reload groups to reflect changes
+      this.loadGroups();
     } catch (error) {
       console.error('Error updating group:', error);
       this.presentToast('Error updating group', 'danger');
@@ -169,7 +135,7 @@ export class ScorePage implements OnInit {
       await this.groupService.deleteGroup(this.deleteGroupId);
       this.presentToast('Group deleted successfully!', 'success');
       this.deleteGroupId = '';
-      await this.loadGroups(); // Reload groups to reflect changes
+      this.loadGroups();
     } catch (error) {
       console.error('Error deleting group:', error);
       this.presentToast('Error deleting group', 'danger');
@@ -180,10 +146,10 @@ export class ScorePage implements OnInit {
     if (!this.updateGroupId) return;
 
     try {
-      const groupDoc = await this.groupService.getGroup(this.updateGroupId).toPromise();
-      if (groupDoc) {
-        this.updateGroupName = groupDoc.groupName || '';
-        this.updateGroupDescription = groupDoc.description || '';
+      const group = await this.groupService.getGroup(this.updateGroupId).toPromise();
+      if (group) {
+        this.updateGroupName = group.groupName || '';
+        this.updateGroupDescription = group.description || '';
       }
     } catch (error) {
       console.error('Error fetching group details:', error);

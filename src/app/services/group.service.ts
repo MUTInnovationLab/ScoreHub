@@ -1,46 +1,46 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface Group {
+  id: string;
+  groupName: string;
+  description?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
-  private collectionName = 'Groups';
+  private groupsCollection = this.firestore.collection<Group>('Groups');
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore) {}
 
-  // Add a new group
-  addGroup(group: { groupName: string, description?: string, members?: string[], createdAt?: Date, updatedAt?: Date }): Promise<void> {
+  getGroups(): Observable<Group[]> {
+    return this.groupsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(action => {
+        const data = action.payload.doc.data() as Omit<Group, 'id'>;
+        const id = action.payload.doc.id;
+        return { id, ...data }; // Combine id with data
+      }))
+    );
+  }
+
+  addGroup(group: Omit<Group, 'id'>): Promise<void> {
     const id = this.firestore.createId();
-    return this.firestore.collection(this.collectionName).doc(id).set({
-      ...group,
-      id,
-      createdAt: group.createdAt || new Date(),
-      updatedAt: group.updatedAt || new Date(),
-    });
+    return this.groupsCollection.doc(id).set({ ...group, id });
   }
 
-  // Retrieve all groups
-  getGroups(): Observable<{ id: string, groupName: string, description?: string, members?: string[], createdAt?: Date, updatedAt?: Date }[]> {
-    return this.firestore.collection(this.collectionName).valueChanges({ idField: 'id' }) as Observable<{ id: string, groupName: string, description?: string, members?: string[], createdAt?: Date, updatedAt?: Date }[]>;
+  updateGroup(id: string, group: Partial<Omit<Group, 'id'>>): Promise<void> {
+    return this.groupsCollection.doc(id).update(group);
   }
 
-  // Retrieve a single group by ID
-  getGroup(id: string): Observable<{ id: string, groupName: string, description?: string, members?: string[], createdAt?: Date, updatedAt?: Date }> {
-    return this.firestore.collection(this.collectionName).doc(id).valueChanges() as Observable<{ id: string, groupName: string, description?: string, members?: string[], createdAt?: Date, updatedAt?: Date }>;
-  }
-
-  // Update a group
-  updateGroup(id: string, group: Partial<{ groupName: string, description?: string, members?: string[], updatedAt?: Date }>): Promise<void> {
-    return this.firestore.collection(this.collectionName).doc(id).update({
-      ...group,
-      updatedAt: group.updatedAt || new Date(),
-    });
-  }
-
-  // Delete a group
   deleteGroup(id: string): Promise<void> {
-    return this.firestore.collection(this.collectionName).doc(id).delete();
+    return this.groupsCollection.doc(id).delete();
+  }
+
+  getGroup(id: string): Observable<Group | undefined> {
+    return this.groupsCollection.doc(id).valueChanges();
   }
 }
