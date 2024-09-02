@@ -1,0 +1,169 @@
+// Variables
+$primary-color: #007bff; // Bootstrap blue
+$secondary-color: #28a745; // Bootstrap green
+$background-color: #f8f9fa; // Light gray background
+$card-background: #ffffff; // White background for cards
+$text-color: #212529; // Dark gray text color
+$border-color: #dee2e6; // Light border color
+$header-height: 56px; // Header height
+$border-radius: 12px; // Updated border radius for more modern rounded corners
+$input-padding: 12px; // Padding for inputs
+
+// Global Styles
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+ion-content {
+  background-color: $background-color;
+  padding: 16px;
+}
+
+// Header Styles
+ion-header {
+  height: $header-height;
+  background-color: $primary-color;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  ion-toolbar {
+    height: 100%;
+    --background: $primary-color;
+
+    ion-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+  }
+}
+
+// Page Container
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - #{$header-height});
+  padding: 16px;
+}
+
+// Form Styles
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+ion-item {
+  --background: $card-background;
+  --border-color: $border-color;
+  border-radius: $border-radius;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+ion-label {
+  color: $text-color;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+ion-input, ion-textarea {
+  --padding-start: $input-padding;
+  --padding-end: $input-padding;
+  --color: $text-color;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
+
+ion-button {
+  background-color: $primary-color;
+  color: #fff;
+  border-radius: $border-radius;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    background-color: darken($primary-color, 15%);
+    transform: translateY(0);
+  }
+  
+  &.danger {
+    background-color: $secondary-color;
+
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+}
+
+// Toast Styles
+.toast-message {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+// Card Styles
+.card {
+  background: $card-background;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+// Responsive Design
+@media (max-width: 992px) {
+  ion-title {
+    font-size: 20px;
+  }
+
+  ion-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  ion-header {
+    height: auto;
+    padding: 0 8px;
+  }
+
+  ion-toolbar {
+    ion-title {
+      font-size: 18px;
+    }
+  }
+
+  form {
+    gap: 16px;
+  }
+
+  ion-item {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  ion-button {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  ion-item {
+    padding: 10px;
+  }
+
+  .page-container {
+    padding: 8px;
+  }
+}
