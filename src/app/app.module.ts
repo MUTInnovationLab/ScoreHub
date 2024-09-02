@@ -9,6 +9,9 @@ import { AppComponent } from './app.component';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 import { RouteReuseStrategy } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireModule } from '@angular/fire/compat';
 
 @NgModule({
   declarations: [AppComponent],
