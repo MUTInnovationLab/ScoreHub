@@ -1,0 +1,33 @@
+ion-content {
+    --background: #f4f4f4;
+  }
+  
+  ion-card {
+    margin: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  
+    ion-card-header {
+      background-color: #007bff;
+      color: #fff;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+  
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  
+    ion-card-content {
+      padding: 16px;
+    }
+  }
+  
+  ion-grid {
+    --ion-grid-padding: 0;
+  }
+  
+  ion-row {
+    --ion-grid-column-padding: 8px;
+  }
