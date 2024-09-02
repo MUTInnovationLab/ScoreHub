@@ -1,13 +1,113 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>score</ion-title>
+    <ion-title>Score Evaluation</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">score</ion-title>
+      <ion-title size="large">Score Evaluation</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <div class="page-container">
+    <form (ngSubmit)="submitScores()" #scoreForm="ngForm">
+      <!-- Group Selection -->
+      <ion-item>
+        <ion-label>Select Group</ion-label>
+        <ion-select [(ngModel)]="selectedGroupId" name="group" required>
+          <ion-select-option *ngFor="let group of groups" [value]="group.id">
+            {{ group.groupName || 'Unnamed Group' }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Score Inputs -->
+      <ion-item>
+        <ion-label position="floating">Business Plan Score</ion-label>
+        <ion-input type="number" [(ngModel)]="businessPlanScore" name="businessPlanScore" min="0" max="100" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Marketing Plan Score</ion-label>
+        <ion-input type="number" [(ngModel)]="marketingPlanScore" name="marketingPlanScore" min="0" max="100" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Web Page Score</ion-label>
+        <ion-input type="number" [(ngModel)]="webPageScore" name="webPageScore" min="0" max="100" required></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" type="submit" [disabled]="!scoreForm.form.valid">Submit Scores</ion-button>
+    </form>
+
+    <!-- Add Group Form -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Add New Group</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="addGroup()" #addGroupForm="ngForm">
+          <ion-item>
+            <ion-label position="floating">Group Name</ion-label>
+            <ion-input type="text" [(ngModel)]="newGroupName" name="newGroupName" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Description</ion-label>
+            <ion-input type="text" [(ngModel)]="newGroupDescription" name="newGroupDescription"></ion-input>
+          </ion-item>
+          <ion-button expand="full" type="submit" [disabled]="!addGroupForm.form.valid">Add Group</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Update Group Form -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Update Group</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="updateGroup()" #updateGroupForm="ngForm">
+          <ion-item>
+            <ion-label>Select Group to Update</ion-label>
+            <ion-select [(ngModel)]="updateGroupId" name="updateGroupId" (ionChange)="loadGroupDetailsForUpdate()" required>
+              <ion-select-option *ngFor="let group of groups" [value]="group.id">
+                {{ group.groupName }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Group Name</ion-label>
+            <ion-input type="text" [(ngModel)]="updateGroupName" name="updateGroupName" required></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Description</ion-label>
+            <ion-input type="text" [(ngModel)]="updateGroupDescription" name="updateGroupDescription"></ion-input>
+          </ion-item>
+          <ion-button expand="full" type="submit" [disabled]="!updateGroupForm.form.valid">Update Group</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Delete Group Form -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Delete Group</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form (ngSubmit)="deleteGroup()" #deleteGroupForm="ngForm">
+          <ion-item>
+            <ion-label>Select Group to Delete</ion-label>
+            <ion-select [(ngModel)]="deleteGroupId" name="deleteGroupId" required>
+              <ion-select-option *ngFor="let group of groups" [value]="group.id">
+                {{ group.groupName }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-button expand="full" type="submit" [disabled]="!deleteGroupForm.form.valid">Delete Group</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

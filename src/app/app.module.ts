@@ -1,12 +1,18 @@
+
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { AngularFireModule } from '@angular/fire/compat'; // Import AngularFireModule
-import { AngularFireAuthModule } from '@angular/fire/compat/auth'; // Import AngularFireAuthModule
-import { environment } from '../environments/environment'; // Import environment configuration
+import { AppComponent } from './app.component';
+
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
+import { RouteReuseStrategy } from '@angular/router';
+
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { environment } from '../environments/environment'; // Ensure correct path
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,10 +20,13 @@ import { environment } from '../environments/environment'; // Import environment
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase), // Initialize Firebase
-    AngularFireAuthModule // Add AngularFireAuthModule for authentication
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
-  bootstrap: [AppComponent],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
