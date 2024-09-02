@@ -12,6 +12,7 @@
   </ion-header>
 
   <div class="page-container">
+    <!-- Score Evaluation Form -->
     <form (ngSubmit)="submitScores()" #scoreForm="ngForm">
       <!-- Group Selection -->
       <ion-item>
@@ -73,7 +74,7 @@
             <ion-label>Select Group to Update</ion-label>
             <ion-select [(ngModel)]="updateGroupId" name="updateGroupId" (ionChange)="loadGroupDetailsForUpdate()" required>
               <ion-select-option *ngFor="let group of groups" [value]="group.id">
-                {{ group.groupName }}
+                {{ group.groupName || 'Unnamed Group' }}
               </ion-select-option>
             </ion-select>
           </ion-item>
@@ -101,7 +102,7 @@
             <ion-label>Select Group to Delete</ion-label>
             <ion-select [(ngModel)]="deleteGroupId" name="deleteGroupId" required>
               <ion-select-option *ngFor="let group of groups" [value]="group.id">
-                {{ group.groupName }}
+                {{ group.groupName || 'Unnamed Group' }}
               </ion-select-option>
             </ion-select>
           </ion-item>
