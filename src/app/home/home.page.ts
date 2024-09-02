@@ -10,11 +10,15 @@ export class HomePage {
 
   constructor(private navCtrl: NavController) {}
 
-  navigateToScorePage() {
-    this.navCtrl.navigateForward('/score'); // Adjust the route path as needed
+  // navigateToScorePage() {
+  //   this.navCtrl.navigateForward('/score'); // Adjust the route path as needed
+  // }
+
+  navigateToRegisterPage() {
+    this.navCtrl.navigateForward('/register'); // Adjust the route path as needed
   }
 
-  // navigateToGroupsPage() {
-  //   this.navCtrl.navigateForward('/groups'); // Adjust the route path as needed
-  // }
+  navigateToLoginPage() {
+    this.navCtrl.navigateForward('/login'); // Adjust the route path as needed
+  }
 }
