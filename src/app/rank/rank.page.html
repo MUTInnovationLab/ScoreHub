@@ -1,13 +1,33 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>rank</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-content>
+  <ion-header>
     <ion-toolbar>
-      <ion-title size="large">rank</ion-title>
+      <ion-title>Ranking</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-card *ngFor="let group of rankings; let i = index">
+    <ion-card-header>
+      <ion-card-title>{{ i + 1 }}. {{ group.groupName }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <strong>Overall Score:</strong> {{ group.overallAverage.toFixed(2) }}
+          </ion-col>
+          <ion-col>
+            <strong>Business Plan:</strong> {{ group.businessPlanAverage.toFixed(2) }}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <strong>Marketing Plan:</strong> {{ group.marketingPlanAverage.toFixed(2) }}
+          </ion-col>
+          <ion-col>
+            <strong>Web Page:</strong> {{ group.webPageAverage.toFixed(2) }}
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
