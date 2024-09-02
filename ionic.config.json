@@ -1,0 +1,7 @@
+{
+  "name": "ScoreHub",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
