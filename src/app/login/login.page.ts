@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { LoadingController, ToastController, NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { NavController, LoadingController, ToastController } from '@ionic/angular';
 
 interface User {
   email: string;
@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
   async login() {
     const loader = await this.loadingController.create({
       message: 'Signing in',
-      cssClass: 'custom-loader-class'
+      cssClass: 'custom-loader-class' // Ensure this CSS class is defined in your styles
     });
 
     try {
@@ -89,37 +89,41 @@ export class LoginPage implements OnInit {
 
   async getUserRole(): Promise<string> {
     try {
-      // Fetch the document snapshot for the user with the given email
       const userDoc = await this.db.collection('Users').ref.where('email', '==', this.email).limit(1).get();
       
-      // Check if the document exists
       if (!userDoc.empty) {
-        const userData = userDoc.docs[0].data() as User; // Safely access the first document's data
-        return userData.role || 'unknown'; // Return role or 'unknown' if role is not defined
+        const userData = userDoc.docs[0].data() as User;
+        return userData.role || 'unknown';
       } else {
-        // Document does not exist
         return 'unknown';
       }
     } catch (error) {
       console.error('Error fetching user role:', error);
-      return 'unknown'; // Return 'unknown' in case of any errors
+      return 'unknown';
     }
   }
-  
+
   navigateBasedOnRole(role: string) {
     switch (role) {
       case 'marker':
-        this.navController.navigateForward('/score');  // Correct path
+        this.navController.navigateForward('/score');
         break;
       case 'admin':
-        this.navController.navigateForward('/admin');  // Correct path
+        this.navController.navigateForward('/admin');
         break;
       default:
         this.presentToast('User role is not recognized.');
         break;
     }
   }
-  
+
+  async showLoading() {
+    const loader = await this.loadingController.create({
+      message: 'Loading...',
+      duration: 2000
+    });
+    await loader.present();
+  }
 
   async presentToast(message: string) {
     const toast = await this.toastController.create({

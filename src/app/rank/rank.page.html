@@ -5,7 +5,9 @@
 </ion-header>
 
 <ion-content padding>
-  <!-- <form [formGroup]="groupForm">
+  <!-- Uncomment this section if needed -->
+  <!--
+  <form [formGroup]="groupForm">
     <ion-item>
       <ion-label position="floating">Group Name</ion-label>
       <ion-input formControlName="groupName"></ion-input>
@@ -17,7 +19,8 @@
     <ion-button expand="full" (click)="createGroup(groupForm.value.groupName, groupForm.value.description)">
       Create Group
     </ion-button>
-  </form> -->
+  </form>
+  -->
 
   <ion-button expand="full" (click)="toggleTop5()">Toggle Top 5 Groups</ion-button>
   <ion-button expand="full" (click)="toggleDetailedReport()">Toggle Detailed Report</ion-button>
@@ -69,5 +72,4 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
-  
 </ion-content>
