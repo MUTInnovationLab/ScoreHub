@@ -66,3 +66,83 @@ ion-row {
 .ranking-table tr:hover {
   background-color: #f1f1f1;
 }
+
+// .marker-evaluations-table {
+//   width: 100%;
+//   border-collapse: collapse;
+//   margin: 20px 0;
+//   font-size: 16px;
+//   text-align: left;
+// }
+
+// .marker-evaluations-table th, .marker-evaluations-table td {
+//   padding: 12px 15px;
+//   border: 1px solid #ddd;
+// }
+
+// .marker-evaluations-table th {
+//   background-color: #f4f4f4;
+//   font-weight: bold;
+// }
+
+// .marker-evaluations-table tr:nth-child(even) {
+//   background-color: #f9f9f9;
+// }
+
+// .marker-evaluations-table tr:hover {
+//   background-color: #f1f1f1;
+// }
+
+// .marker-evaluations-table td {
+//   text-align: center;
+// }
+
+// .marker-evaluations-table th:first-child,
+// .marker-evaluations-table td:first-child {
+//   text-align: left;
+// }
+
+// .marker-evaluations-table td[colspan="5"] {
+//   text-align: right;
+//   font-weight: bold;
+// }
+
+// .pagination-controls {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-top: 10px;
+// }
+
+// .pagination-controls ion-button {
+//   --padding-start: 12px;
+//   --padding-end: 12px;
+//   --padding-top: 8px;
+//   --padding-bottom: 8px;
+//   --background: #3880ff;
+//   --color: white;
+// }
+
+/* Marker Evaluations Table CSS */
+.marker-evaluations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.marker-evaluations-table th,
+.marker-evaluations-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.marker-evaluations-table th {
+  background-color: #f4f4f4;
+}
+
+.marker-evaluations-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.marker-evaluations-table td:first-child {
+  font-weight: bold;
+}
