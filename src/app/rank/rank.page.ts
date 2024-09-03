@@ -1,34 +1,107 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+// import { Component, OnInit } from '@angular/core';
+// import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+// interface Marking {
+//   groupName: string;
+//   businessPlanScore: number;
+//   marketingPlanScore: number;
+//   webPageScore: number;
+// }
+
+// @Component({
+//   selector: 'app-rank',
+//   templateUrl: './rank.page.html',
+//   styleUrls: ['./rank.page.scss'],
+// })
+// export class RankPage implements OnInit {
+//   top5Items: { rank: number, groupName: string }[] = [];
+//   detailedReports: { groupName: string, businessIdeaScore: number, marketingScore: number, webScore: number }[] = [];
+
+//   constructor(private firestore: AngularFirestore) {}
+
+//   ngOnInit() {
+//     // Fetch Top 5 Items
+//     this.firestore.collection<Marking>('Marking', ref => ref.orderBy('businessPlanScore', 'desc').limit(5))
+//       .valueChanges()
+//       .subscribe((data: Marking[]) => {
+//         this.top5Items = data.map((item, index) => ({
+//           rank: index + 1,
+//           groupName: item.groupName
+//         }));
+//       });
+
+//     // Fetch Detailed Reports
+//     this.firestore.collection<Marking>('Marking').valueChanges().subscribe((data: Marking[]) => {
+//       this.detailedReports = data.map(item => ({
+//         groupName: item.groupName,
+//         businessIdeaScore: item.businessPlanScore,
+//         marketingScore: item.marketingPlanScore,
+//         webScore: item.webPageScore
+//       }));
+//     });
+//   }
+
+//   navigateToRankingPage(event: any) {
+//     const selectedUser = event.detail.value;
+//     console.log('Selected User:', selectedUser);
+//     // Implement navigation logic here
+//   }
+// }
+
+
+import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+
+interface Marking {
+  groupName: string;
+  businessPlanScore: number;
+  marketingPlanScore: number;
+  webPageScore: number;
+}
 
 @Component({
   selector: 'app-rank',
-  templateUrl: 'rank.page.html',
-  styleUrls: ['rank.page.scss'],
+  templateUrl: './rank.page.html',
+  styleUrls: ['./rank.page.scss'],
 })
-export class RankPage {
-  top5Items = [
-    { rank: 1, groupName: 'Group A' },
-    { rank: 2, groupName: 'Group B' },
-    { rank: 3, groupName: 'Group C' },
-    { rank: 4, groupName: 'Group D' },
-    { rank: 5, groupName: 'Group E' },
-  ];
+export class RankPage implements OnInit {
+  top5Items: { rank: number, groupName: string, averageScore: number }[] = [];
+  detailedReports: { groupName: string, businessIdeaScore: number, marketingScore: number, webScore: number, averageScore: number }[] = [];
 
-  detailedReports = [
-    { groupName: 'Group A', businessIdeaScore: 85, marketingScore: 90, webScore: 88 },
-    { groupName: 'Group B', businessIdeaScore: 80, marketingScore: 85, webScore: 82 },
-    { groupName: 'Group C', businessIdeaScore: 40, marketingScore: 95, webScore: 52 },
-    { groupName: 'Group D', businessIdeaScore: 60, marketingScore: 45, webScore: 62 },
-    { groupName: 'Group E', businessIdeaScore: 70, marketingScore: 65, webScore: 92 },
-    { groupName: 'Group F', businessIdeaScore: 80, marketingScore: 75, webScore: 72 },
-    // Add more reports here
-  ];
+  constructor(private firestore: AngularFirestore) {}
 
-  constructor(private router: Router) {}
+  ngOnInit() {
+    // Fetch and rank Top 5 Items based on average score
+    this.firestore.collection<Marking>('Marking').valueChanges().subscribe((data: Marking[]) => {
+      // Calculate average scores and rank the top 5
+      const rankedData = data.map(item => ({
+        ...item,
+        averageScore: (item.businessPlanScore + item.marketingPlanScore + item.webPageScore) / 3
+      }))
+      .sort((a, b) => b.averageScore - a.averageScore)
+      .slice(0, 5)
+      .map((item, index) => ({
+        rank: index + 1,
+        groupName: item.groupName,
+        averageScore: item.averageScore
+      }));
+
+      this.top5Items = rankedData;
+
+      // Detailed Reports with average score
+      this.detailedReports = data.map(item => ({
+        groupName: item.groupName,
+        businessIdeaScore: item.businessPlanScore,
+        marketingScore: item.marketingPlanScore,
+        webScore: item.webPageScore,
+        averageScore: (item.businessPlanScore + item.marketingPlanScore + item.webPageScore) / 3
+      }));
+    });
+  }
 
   navigateToRankingPage(event: any) {
     const selectedUser = event.detail.value;
-    this.router.navigate(['/ranking-page', { user: selectedUser }]);
+    console.log('Selected User:', selectedUser);
+    // Implement navigation logic here
   }
 }

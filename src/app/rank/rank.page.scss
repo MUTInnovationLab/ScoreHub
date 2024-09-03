@@ -1,33 +1,68 @@
 ion-content {
-    --background: #f4f4f4;
+  --background: #f4f4f4;
+}
+
+ion-card {
+  margin: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  ion-card-header {
+    background-color: #007bff;
+    color: #fff;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
-  
-  ion-card {
-    margin: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  
-    ion-card-header {
-      background-color: #007bff;
-      color: #fff;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-  
-    ion-card-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-  
-    ion-card-content {
-      padding: 16px;
-    }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
   }
-  
-  ion-grid {
-    --ion-grid-padding: 0;
+
+  ion-card-content {
+    padding: 16px;
   }
-  
-  ion-row {
-    --ion-grid-column-padding: 8px;
-  }
+}
+
+ion-grid {
+  --ion-grid-padding: 0;
+}
+
+ion-row {
+  --ion-grid-column-padding: 8px;
+}
+
+/* Style for the ranking table */
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ranking-table th,
+.ranking-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.ranking-table th {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: 600;
+}
+
+.ranking-table td {
+  text-align: left;
+}
+
+.ranking-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.ranking-table tr:hover {
+  background-color: #f1f1f1;
+}

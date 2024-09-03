@@ -35,14 +35,12 @@
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { RouteReuseStrategy, RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [AppComponent],
@@ -50,13 +48,11 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule
+    AngularFireModule.initializeApp(environment.firebaseConfig), // Initialize Firebase
+    AngularFirestoreModule, // Import AngularFirestoreModule here
   ],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideFirestore(() => getFirestore())
-  ],
-  bootstrap: [AppComponent]
+  providers: [],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
+
