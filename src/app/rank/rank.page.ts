@@ -40,6 +40,9 @@ export class RankPage implements OnInit {
   currentMarkerIndex: number = 0;
   currentMarkerEvaluations: Marking[] = [];
   currentMarkerName: string = '';
+  searchGroupName: string = '';
+  searchMarkerEmail: string = '';
+
 
   constructor(private firestore: AngularFirestore) {}
 
@@ -109,6 +112,40 @@ export class RankPage implements OnInit {
     this.averages.webPageAvg = totalWebPageScore / totalReports;
     this.averages.criterionAverage = (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg) / 3;
   }
+
+  searchDetailedReports() {
+    if (this.searchGroupName.trim() === '') {
+      this.updatePaginatedReports(); // Reset to original if no search term
+      return;
+    }
+    
+    this.paginatedReports = this.detailedReports.filter(report => 
+      report.groupName.toLowerCase().includes(this.searchGroupName.toLowerCase())
+    );
+  
+    // Update averages based on the filtered reports
+    this.calculateAverages();
+  }
+  
+  searchMarkerEvaluations() {
+    if (this.searchMarkerEmail.trim() === '') {
+      this.updateCurrentMarker(); // Reset to original if no search term
+      return;
+    }
+  
+    const filteredEvaluations = this.markerEvaluations.find(markerEval =>
+      markerEval.markerName.toLowerCase() === this.searchMarkerEmail.toLowerCase()
+    );
+  
+    if (filteredEvaluations) {
+      this.currentMarkerEvaluations = filteredEvaluations.evaluations;
+      this.currentMarkerName = filteredEvaluations.markerName;
+    } else {
+      // Handle case where no evaluations match the search email
+      this.currentMarkerEvaluations = [];
+      this.currentMarkerName = '';
+    }
+  }  
 
   fetchMarkersAndEvaluations() {
     this.firestore.collection<User>('Users', ref => ref.where('role', '==', 'marker')).valueChanges().subscribe((users: User[]) => {

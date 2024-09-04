@@ -5,6 +5,7 @@
       <ion-card-title>Top 5 Rankings</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <ion-grid>
       <table class="ranking-table">
         <thead>
           <tr>
@@ -21,7 +22,19 @@
           </tr>
         </tbody>
       </table>
+    </ion-grid>
     </ion-card-content>
+  </ion-card>
+
+  <!-- Detailed Reports Search Card -->
+  <ion-card *ngIf="!showMarkerEvaluations">
+    <ion-card-header>
+      <ion-searchbar 
+        [(ngModel)]="searchGroupName" 
+        (ionInput)="searchDetailedReports()" 
+        placeholder="Search by Group Name">
+      </ion-searchbar>
+    </ion-card-header>
   </ion-card>
 
   <!-- Detailed Reports -->
@@ -65,49 +78,65 @@
 
       <!-- Pagination Controls -->
       <div class="pagination-controls">
-        <ion-button (click)="previousPage()" [disabled]="currentPage === 0">Previous</ion-button>
-        <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">Next</ion-button>
+        <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
       </div>
     </ion-card-content>
   </ion-card>
 
+  <!-- Marker Evaluations Search Card -->
+  <ion-card *ngIf="showMarkerEvaluations">
+    <ion-card-header>
+      <ion-searchbar 
+        [(ngModel)]="searchMarkerEmail" 
+        (ionInput)="searchMarkerEvaluations()" 
+        placeholder="Search by Marker Email">
+      </ion-searchbar>
+    </ion-card-header>
+  </ion-card>
+
   <!-- Marker Evaluations -->
-<!-- Marker Evaluations -->
-<ion-card *ngIf="showMarkerEvaluations">
-  <ion-card-header>
-    <ion-card-title>Marker Evaluations</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <table class="marker-evaluations-table">
-      <thead>
-        <tr>
-          <th>Marker Name</th>
-          <th>Group Name</th>
-          <th>Business Plan Score</th>
-          <th>Marketing Plan Score</th>
-          <th>Web Page Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let evaluation of currentMarkerEvaluations">
-          <td>{{ currentMarkerName }}</td>
-          <td>{{ evaluation.groupName }}</td>
-          <td>{{ evaluation.businessPlanScore }}</td>
-          <td>{{ evaluation.marketingPlanScore }}</td>
-          <td>{{ evaluation.webPageScore }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <ion-card *ngIf="showMarkerEvaluations">
+    <ion-card-header>
+      <ion-card-title>Marker Evaluations</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="marker-evaluations-table">
+        <thead>
+          <tr>
+            <th>Marker Name</th>
+            <th>Group Name</th>
+            <th>Business Plan Score</th>
+            <th>Marketing Plan Score</th>
+            <th>Web Page Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let evaluation of currentMarkerEvaluations">
+            <td>{{ currentMarkerName }}</td>
+            <td>{{ evaluation.groupName }}</td>
+            <td>{{ evaluation.businessPlanScore }}</td>
+            <td>{{ evaluation.marketingPlanScore }}</td>
+            <td>{{ evaluation.webPageScore }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- Pagination Controls -->
-    <div class="pagination-controls">
-      <ion-button (click)="previousMarker()" [disabled]="currentMarkerIndex === 0">Previous</ion-button>
-      <ion-button (click)="nextMarker()" [disabled]="currentMarkerIndex >= markerEvaluations.length - 1">Next</ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
-
-
+      <!-- Pagination Controls -->
+      <div class="pagination-controls">
+        <ion-button (click)="previousMarker()" [disabled]="currentMarkerIndex === 0">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextMarker()" [disabled]="currentMarkerIndex >= markerEvaluations.length - 1">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
 
 <ion-footer>

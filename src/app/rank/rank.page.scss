@@ -1,29 +1,193 @@
+// /* Overall Background Color */
+// ion-content {
+//   --background: #006281; /* Use the blue color from your design */
+// }
+
+// /* Card Styles */
+// ion-card {
+//   margin: 16px;
+//   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+//   border-radius: 8px;
+
+//   ion-card-header {
+//     background-color: #006281; /* Match the header color with your design */
+//     color: #fff;
+//     border-top-left-radius: 8px;
+//     border-top-right-radius: 8px;
+//   }
+
+//   ion-card-title {
+//     font-size: 18px;
+//     font-weight: 600;
+//   }
+
+//   ion-card-content {
+//     padding: 16px;
+//   }
+// }
+
+// /* Grid and Row Styles */
+// ion-grid {
+//   --ion-grid-padding: 0;
+// }
+
+// ion-row {
+//   --ion-grid-column-padding: 8px;
+// }
+
+// /* Ranking Table Styles */
+// .ranking-table {
+//   width: 100%;
+//   border-collapse: collapse;
+//   margin-top: 16px;
+//   background-color: #fff; /* White background for table */
+//   border-radius: 8px;
+//   overflow: hidden;
+// }
+
+// .ranking-table th,
+// .ranking-table td {
+//   border: 1px solid #ddd;
+//   padding: 12px;
+//   text-align: left;
+// }
+
+// .ranking-table th {
+//   background-color: #006281; /* Header background color */
+//   color: #fff;
+//   font-weight: 600;
+// }
+
+// .ranking-table td {
+//   text-align: left;
+// }
+
+// .ranking-table tr:nth-child(even) {
+//   background-color: #f9f9f9;
+// }
+
+// .ranking-table tr:hover {
+//   background-color: #f1f1f1;
+// }
+
+// /* Marker Evaluations Table Styles */
+// .marker-evaluations-table {
+//   width: 100%;
+//   border-collapse: collapse;
+// }
+
+// .marker-evaluations-table th,
+// .marker-evaluations-table td {
+//   border: 1px solid #ddd;
+//   padding: 8px;
+//   text-align: left;
+// }
+
+// .marker-evaluations-table th {
+//   background-color: #f4f4f4; /* Light gray for header */
+// }
+
+// .marker-evaluations-table tr:nth-child(even) {
+//   background-color: #f9f9f9;
+// }
+
+// .marker-evaluations-table td:first-child {
+//   font-weight: bold;
+// }
+
+// /* Search Card Styles */
+// .search-card {
+//   margin: 16px;
+//   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+//   border-radius: 8px;
+//   background-color: #fff; /* White background for search card */
+// }
+
+// .search-card ion-card-header {
+//   background-color: #006281; /* Header color */
+//   color: #fff;
+//   border-top-left-radius: 8px;
+//   border-top-right-radius: 8px;
+// }
+
+// .search-card ion-card-title {
+//   font-size: 18px;
+//   font-weight: 600;
+// }
+
+// .search-card ion-card-content {
+//   padding: 16px;
+// }
+
+// .search-card ion-item {
+//   margin-bottom: 12px;
+// }
+
+// .search-card ion-button {
+//   --background: #006281; /* Button background color */
+//   --color: #fff; /* Button text color */
+//   --border-radius: 20px;
+//   font-weight: bold;
+//   height: 48px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+// }
+
+// .ranking-table, .marker-evaluations-table {
+//   width: 100%;
+//   border-collapse: collapse;
+// }
+
+// .ranking-table th, .ranking-table td, .marker-evaluations-table th, .marker-evaluations-table td {
+//   padding: 8px;
+//   text-align: left;
+//   border: 1px solid #ddd;
+// }
+
+// .ranking-table th, .marker-evaluations-table th {
+//   background-color: #f4f4f4;
+// }
+
+// .pagination-controls {
+//   text-align: center;
+//   margin-top: 10px;
+// }
+
+// @media (max-width: 768px) {
+//   .ranking-table, .marker-evaluations-table {
+//     font-size: 14px;
+//   }
+// }
+
+
+/* Overall Background Color */
 ion-content {
-  --background: #f4f4f4;
+  --background: #006281; /* Use the blue color from your design */
 }
 
+/* Card Styles */
 ion-card {
   margin: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-
-  ion-card-header {
-    background-color: #007bff;
-    color: #fff;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-  }
-
-  ion-card-title {
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  ion-card-content {
-    padding: 16px;
-  }
 }
 
+ion-card-header {
+  background-color: #006281; /* Match the header color with your design */
+  color: #fff;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+ion-card-content {
+  padding: 16px;
+}
+
+/* Grid and Row Styles */
 ion-grid {
   --ion-grid-padding: 0;
 }
@@ -32,117 +196,143 @@ ion-row {
   --ion-grid-column-padding: 8px;
 }
 
-/* Style for the ranking table */
-.ranking-table {
+/* Ranking Table Styles */
+.ranking-table,
+.marker-evaluations-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
-  background-color: #fff;
+  background-color: #fff; /* White background for table */
   border-radius: 8px;
   overflow: hidden;
 }
 
 .ranking-table th,
-.ranking-table td {
+.ranking-table td,
+.marker-evaluations-table th,
+.marker-evaluations-table td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
 }
 
-.ranking-table th {
-  background-color: #007bff;
+.ranking-table th,
+.marker-evaluations-table th {
+  background-color: #006281; /* Header background color */
   color: #fff;
   font-weight: 600;
 }
 
-.ranking-table td {
-  text-align: left;
-}
-
-.ranking-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.ranking-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-// .marker-evaluations-table {
-//   width: 100%;
-//   border-collapse: collapse;
-//   margin: 20px 0;
-//   font-size: 16px;
-//   text-align: left;
-// }
-
-// .marker-evaluations-table th, .marker-evaluations-table td {
-//   padding: 12px 15px;
-//   border: 1px solid #ddd;
-// }
-
-// .marker-evaluations-table th {
-//   background-color: #f4f4f4;
-//   font-weight: bold;
-// }
-
-// .marker-evaluations-table tr:nth-child(even) {
-//   background-color: #f9f9f9;
-// }
-
-// .marker-evaluations-table tr:hover {
-//   background-color: #f1f1f1;
-// }
-
-// .marker-evaluations-table td {
-//   text-align: center;
-// }
-
-// .marker-evaluations-table th:first-child,
-// .marker-evaluations-table td:first-child {
-//   text-align: left;
-// }
-
-// .marker-evaluations-table td[colspan="5"] {
-//   text-align: right;
-//   font-weight: bold;
-// }
-
-// .pagination-controls {
-//   display: flex;
-//   justify-content: space-between;
-//   margin-top: 10px;
-// }
-
-// .pagination-controls ion-button {
-//   --padding-start: 12px;
-//   --padding-end: 12px;
-//   --padding-top: 8px;
-//   --padding-bottom: 8px;
-//   --background: #3880ff;
-//   --color: white;
-// }
-
-/* Marker Evaluations Table CSS */
-.marker-evaluations-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.marker-evaluations-table th,
-.marker-evaluations-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.marker-evaluations-table th {
-  background-color: #f4f4f4;
-}
-
+.ranking-table tr:nth-child(even),
 .marker-evaluations-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-.marker-evaluations-table td:first-child {
+.ranking-table tr:hover,
+.marker-evaluations-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Search Card Styles */
+.search-card {
+  margin: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #fff; /* White background for search card */
+}
+
+.search-card ion-card-header {
+  background-color: #006281; /* Header color */
+  color: #fff;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.search-card ion-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.search-card ion-card-content {
+  padding: 16px;
+}
+
+.search-card ion-item {
+  margin-bottom: 12px;
+}
+
+.search-card ion-button {
+  --background: #006281; /* Button background color */
+  --color: #fff; /* Button text color */
+  --border-radius: 20px;
   font-weight: bold;
+  height: 48px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Pagination Controls */
+.pagination-controls {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  ion-card {
+    margin: 8px;
+  }
+
+  ion-card-title {
+    font-size: 16px;
+  }
+
+  ion-card-content {
+    padding: 12px;
+  }
+
+  .ranking-table,
+  .marker-evaluations-table {
+    font-size: 14px;
+  }
+
+  .ranking-table th,
+  .ranking-table td,
+  .marker-evaluations-table th,
+  .marker-evaluations-table td {
+    padding: 8px;
+  }
+
+  .pagination-controls {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  ion-card {
+    margin: 4px;
+  }
+
+  ion-card-title {
+    font-size: 14px;
+  }
+
+  ion-card-content {
+    padding: 8px;
+  }
+
+  .ranking-table,
+  .marker-evaluations-table {
+    font-size: 12px;
+  }
+
+  .ranking-table th,
+  .ranking-table td,
+  .marker-evaluations-table th,
+  .marker-evaluations-table td {
+    padding: 6px;
+  }
+
+  .pagination-controls {
+    font-size: 12px;
+  }
 }
