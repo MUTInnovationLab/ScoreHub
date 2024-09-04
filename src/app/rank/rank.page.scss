@@ -1,33 +1,57 @@
 ion-content {
-    --background: #f4f4f4;
+  --background: #f4f4f4;
+}
+
+ion-card {
+  margin: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  ion-card-header {
+    background-color: #007bff;
+    color: #fff;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 12px;
   }
-  
-  ion-card {
-    margin: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  
-    ion-card-header {
-      background-color: #007bff;
-      color: #fff;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-  
-    ion-card-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-  
-    ion-card-content {
-      padding: 16px;
-    }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
   }
-  
-  ion-grid {
-    --ion-grid-padding: 0;
+
+  ion-card-content {
+    padding: 16px;
   }
-  
-  ion-row {
-    --ion-grid-column-padding: 8px;
-  }
+}
+
+ion-grid {
+  --ion-grid-padding: 0;
+}
+
+ion-row {
+  --ion-grid-column-padding: 8px;
+}
+
+/* Specific styles for the Total column */
+ion-row.total-row {
+  font-weight: bold;
+}
+
+ion-col.total-column {
+  text-align: right; /* Align the text to the right */
+  font-weight: 600; /* Make the text a bit bolder */
+  color: #333; /* Darker color for visibility */
+}
+
+ion-col {
+  padding: 8px 0; /* Ensure padding for all columns */
+}
+
+ion-col:first-child {
+  padding-left: 16px; /* Add extra padding for the first column */
+}
+
+ion-col:last-child {
+  padding-right: 16px; /* Add extra padding for the last column */
+}

@@ -14,23 +14,28 @@ export class GroupService {
 
   // Add a new group
   addGroup(group: any): Promise<void> {
-    const { groupId } = group;
-    return this.groupsCollection.doc(groupId).set(group);
+    const { id } = group;
+    return this.groupsCollection.doc(id).set(group);
+  }
+
+  // Fetch all groups
+  getGroups(): Observable<any[]> {
+    return this.groupsCollection.valueChanges();
   }
 
   // Get a group by ID
-  getGroup(groupId: string): Observable<any> {
-    return this.groupsCollection.doc(groupId).valueChanges();
+  getGroup(id: string): Observable<any> {
+    return this.groupsCollection.doc(id).valueChanges();
   }
 
   // Update a group
-  updateGroup(groupId: string, group: any): Promise<void> {
-    return this.groupsCollection.doc(groupId).update(group);
+  updateGroup(id: string, group: any): Promise<void> {
+    return this.groupsCollection.doc(id).update(group);
   }
 
   // Delete a group
-  deleteGroup(groupId: string): Promise<void> {
-    return this.groupsCollection.doc(groupId).delete();
+  deleteGroup(id: string): Promise<void> {
+    return this.groupsCollection.doc(id).delete();
   }
 
   // Get all groups

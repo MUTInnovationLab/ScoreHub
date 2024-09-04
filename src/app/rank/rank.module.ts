@@ -18,12 +18,15 @@
 //   declarations: [RankPage]
 // })
 // export class RankPageModule {}
+
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Ensure this import
 import { IonicModule } from '@ionic/angular';
 import { RankPageRoutingModule } from './rank-routing.module';
 import { RankPage } from './rank.page';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 @NgModule({
   imports: [
@@ -32,8 +35,15 @@ import { RankPage } from './rank.page';
     ReactiveFormsModule, // Ensure ReactiveFormsModule is included
     IonicModule,
     RankPageRoutingModule,
+    AngularFirestoreModule
   ],
   declarations: [RankPage],
 })
 export class RankPageModule {}
+
+
+
+
+
+
 

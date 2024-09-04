@@ -40,20 +40,26 @@
       <ion-card-title>Detailed Reports</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-grid>
-        <ion-row>
-          <ion-col size="3"><strong>Group Name</strong></ion-col>
-          <ion-col size="3"><strong>Business Idea Score</strong></ion-col>
-          <ion-col size="3"><strong>Marketing Score</strong></ion-col>
-          <ion-col size="3"><strong>Web Score</strong></ion-col>
-        </ion-row>
-        <ion-row *ngFor="let report of detailedReports">
-          <ion-col size="3">{{report.groupName}}</ion-col>
-          <ion-col size="3">{{report.businessIdeaScore}}</ion-col>
-          <ion-col size="3">{{report.marketingScore}}</ion-col>
-          <ion-col size="3">{{report.webScore}}</ion-col>
-        </ion-row>
-      </ion-grid>
+      <table class="detailed-reports-table">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Business Idea Score</th>
+            <th>Marketing Score</th>
+            <th>Web Score</th>
+            <th>Average</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of detailedReports">
+            <td>{{ report.groupName }}</td>
+            <td>{{ report.businessPlanScore }}</td>
+            <td>{{ report.marketingPlanScore }}</td>
+            <td>{{ report.webPageScore }}</td>
+            <td>{{ (report.businessPlanScore + report.marketingPlanScore + report.webPageScore) / 3 | number: '1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
     </ion-card-content>
   </ion-card>
 </ion-content>
