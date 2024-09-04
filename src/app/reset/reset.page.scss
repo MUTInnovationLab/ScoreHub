@@ -1,0 +1,48 @@
+ion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  --background: #006281; 
+  height: 100vh; /* Full height of the viewport */
+}
+
+form {
+  width: 100%;
+  max-width: 500px; /* Increase the max-width for a wider form */
+  padding: 20px; /* Adjust padding if needed */
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  margin-top: 75px; /* Adjust margin-top as needed */
+  min-height: 600px; /* Add minimum height for a taller form */
+}
+
+ion-item {
+  width: 100%;
+  margin-bottom: 16px;
+  margin-top: 150px; /* Add margin-top to move input fields down */
+}
+
+/* Common styles for all buttons */
+ion-button {
+  margin-top: 24px; /* Add margin-top to move buttons down */
+  width: 100%; /* Full width button */
+  background-color: #812B29; /* Button background color */
+  color: white; /* Button text color */
+  border-radius: 8px; /* Optional: Rounded corners */
+  height: 45px; /* Optional: Set height for buttons */
+  --background: #56231F;  /* Changed to new color */
+}
+
+/* Additional styles for reset button */
+ion-button.reset-button {
+  margin-top: 32px; /* Add margin-top to move the reset button further down */
+  --background: #56231F;  /* Changed to new color */
+}
+

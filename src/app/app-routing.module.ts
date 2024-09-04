@@ -8,7 +8,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -34,10 +34,6 @@ const routes: Routes = [
   {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then( m => m.AdminPageModule)
-  },
-  {
-    path: 'ranking-page',
-    loadChildren: () => import('./ranking-page/ranking-page.module').then(m => m.RankingPageModule)
   },
 
 ];

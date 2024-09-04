@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
+
 
 import { IonicModule } from '@ionic/angular';
 
@@ -13,6 +15,7 @@ import { ResetPage } from './reset.page';
     CommonModule,
     FormsModule,
     IonicModule,
+    ReactiveFormsModule,
     ResetPageRoutingModule
   ],
   declarations: [ResetPage]
