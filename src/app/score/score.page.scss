@@ -1,5 +1,5 @@
 // Variables
-$primary-color: #007bff; // Bootstrap blue
+$primary-color: #395e85; // Bootstrap blue
 $secondary-color: #28a745; // Bootstrap green
 $background-color: #f8f9fa; // Light gray background
 $card-background: #ffffff; // White background for cards
@@ -17,16 +17,17 @@ html, body {
 }
 
 ion-content {
-  background-color: $background-color;
+  background-color: #f8f9fa;
   padding: 16px;
 }
 
 // Header Styles
 ion-header {
+  
   height: $header-height;
   background-color: $primary-color;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #833030;
+  box-shadow: 0 2px 4px rgba(137, 42, 43, 0.987);
 
   ion-toolbar {
     height: 100%;
@@ -35,9 +36,22 @@ ion-header {
     ion-title {
       font-size: 22px;
       font-weight: 600;
+      text-align: center;
+      color: #833030;
     }
   }
 }
+
+p{
+  color: red;
+  margin: 0px 0px 0px 30px;
+}
+
+ion-title .title{
+  text-align: center;
+
+}
+
 
 // Page Container
 .page-container {
@@ -45,6 +59,8 @@ ion-header {
   flex-direction: column;
   min-height: calc(100vh - #{$header-height});
   padding: 16px;
+  background-color: $primary-color;
+
 }
 
 // Form Styles
@@ -71,9 +87,14 @@ ion-label {
 ion-input, ion-textarea {
   --padding-start: $input-padding;
   --padding-end: $input-padding;
-  --color: $text-color;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
+  --color: rgb(218, 193, 56);
+  //border: 1px solid $border-color;
+  //border-radius: $border-radius;
+}
+
+ion-card-title{
+  text-align: center;
+  --color: rgb(218, 193, 56);
 }
 
 ion-button {
@@ -91,7 +112,7 @@ ion-button {
   }
 
   &:active {
-    background-color: darken($primary-color, 15%);
+    background-color: darken(rgb(1, 136, 1), 15%);
     transform: translateY(0);
   }
   
