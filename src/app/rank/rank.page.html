@@ -1,73 +1,150 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Group Rankings</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content padding>
-  <!-- <form [formGroup]="groupForm">
-    <ion-item>
-      <ion-label position="floating">Group Name</ion-label>
-      <ion-input formControlName="groupName"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Description</ion-label>
-      <ion-input formControlName="description"></ion-input>
-    </ion-item>
-    <ion-button expand="full" (click)="createGroup(groupForm.value.groupName, groupForm.value.description)">
-      Create Group
-    </ion-button>
-  </form> -->
-
-  <ion-button expand="full" (click)="toggleTop5()">Toggle Top 5 Groups</ion-button>
-  <ion-button expand="full" (click)="toggleDetailedReport()">Toggle Detailed Report</ion-button>
-
-  <ion-card *ngIf="showTop5">
+<ion-content>
+  <!-- Top 5 Rankings -->
+  <ion-card *ngIf="!showMarkerEvaluations">
     <ion-card-header>
-      <ion-card-title>Top 5 Groups</ion-card-title>
+      <ion-card-title>Top 5 Rankings</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-grid>
-        <ion-row>
-          <ion-col>#</ion-col>
-          <ion-col>Group Name</ion-col>
-          <ion-col>Average Score</ion-col>
-        </ion-row>
-        <ion-row *ngFor="let group of rankings | slice:0:5; let i = index">
-          <ion-col>{{ i + 1 }}</ion-col>
-          <ion-col>{{ group.groupName }}</ion-col>
-          <ion-col>{{ group.overallAverage.toFixed(2) }}</ion-col>
-        </ion-row>
-      </ion-grid>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Group Name</th>
+            <th>Average Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of top5Items">
+            <td>{{ item.rank }}</td>
+            <td>{{ item.groupName }}</td>
+            <td>{{ item.averageScore | number: '1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-grid>
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="showDetailedReport">
+  <!-- Detailed Reports Search Card -->
+  <ion-card *ngIf="!showMarkerEvaluations">
     <ion-card-header>
-      <ion-card-title>Detailed Report</ion-card-title>
+      <ion-searchbar 
+        [(ngModel)]="searchGroupName" 
+        (ionInput)="searchDetailedReports()" 
+        placeholder="Search by Group Name">
+      </ion-searchbar>
+    </ion-card-header>
+  </ion-card>
+
+  <!-- Detailed Reports -->
+  <ion-card *ngIf="!showMarkerEvaluations">
+    <ion-card-header>
+      <ion-card-title>Detailed Reports</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-grid>
-        <ion-row>
-          <ion-col>#</ion-col>
-          <ion-col>Group Name</ion-col>
-          <ion-col>Marker ID</ion-col>
-          <ion-col>Business Plan Score</ion-col>
-          <ion-col>Marketing Plan Score</ion-col>
-          <ion-col>Web Page Score</ion-col>
-        </ion-row>
-        <ion-row *ngFor="let group of rankings; let i = index">
-          <ion-col>{{ i + 1 }}</ion-col>
-          <ion-col>{{ group.groupName }}</ion-col>
-          <ion-row *ngFor="let evaluation of group.evaluations">
-            <ion-col>{{ evaluation.markerId }}</ion-col>
-            <ion-col>{{ evaluation.businessPlanScore }}</ion-col>
-            <ion-col>{{ evaluation.marketingPlanScore }}</ion-col>
-            <ion-col>{{ evaluation.webPageScore }}</ion-col>
-          </ion-row>
-        </ion-row>
-      </ion-grid>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Business Plan Score</th>
+            <th>Marketing Plan Score</th>
+            <th>Web Page Score</th>
+            <th>Average Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of paginatedReports">
+            <td>{{ report.groupName }}</td>
+            <td>{{ report.businessPlanScore | number: '1.2-2' }}</td>
+            <td>{{ report.marketingPlanScore | number: '1.2-2' }}</td>
+            <td>{{ report.webPageScore | number: '1.2-2' }}</td>
+            <td>{{ report.averageScore | number: '1.2-2' }}</td>
+          </tr>
+          <!-- Criterion Averages Row -->
+          <tr>
+            <td><strong>Criterion Average</strong></td>
+            <td>{{ averages.businessPlanAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.marketingPlanAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.webPageAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.criterionAverage | number: '1.2-2' }}</td>
+          </tr>
+          <!-- Overall Average Row -->
+          <tr>
+            <td colspan="5" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-controls">
+        <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
-  
+
+  <!-- Marker Evaluations Search Card -->
+  <ion-card *ngIf="showMarkerEvaluations">
+    <ion-card-header>
+      <ion-searchbar 
+        [(ngModel)]="searchMarkerEmail" 
+        (ionInput)="searchMarkerEvaluations()" 
+        placeholder="Search by Marker Email">
+      </ion-searchbar>
+    </ion-card-header>
+  </ion-card>
+
+  <!-- Marker Evaluations -->
+  <ion-card *ngIf="showMarkerEvaluations">
+    <ion-card-header>
+      <ion-card-title>Marker Evaluations</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="marker-evaluations-table">
+        <thead>
+          <tr>
+            <th>Marker Name</th>
+            <th>Group Name</th>
+            <th>Business Plan Score</th>
+            <th>Marketing Plan Score</th>
+            <th>Web Page Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let evaluation of currentMarkerEvaluations">
+            <td>{{ currentMarkerName }}</td>
+            <td>{{ evaluation.groupName }}</td>
+            <td>{{ evaluation.businessPlanScore }}</td>
+            <td>{{ evaluation.marketingPlanScore }}</td>
+            <td>{{ evaluation.webPageScore }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-controls">
+        <ion-button (click)="previousMarker()" [disabled]="currentMarkerIndex === 0">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextMarker()" [disabled]="currentMarkerIndex >= markerEvaluations.length - 1">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleMarkerEvaluations()">
+        {{ showMarkerEvaluations ? 'Show Rankings' : 'Show Marker Evaluations' }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

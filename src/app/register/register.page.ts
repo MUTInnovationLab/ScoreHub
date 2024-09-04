@@ -93,6 +93,7 @@ export class RegisterPage implements OnInit {
     toast.present();
   }
 
+  
   async presentAlert(header: string, message: string) {
     const alert = await this.alertController.create({
       header: header,
