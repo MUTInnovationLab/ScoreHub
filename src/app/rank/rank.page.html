@@ -1,73 +1,57 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Group Rankings</ion-title>
+    <ion-title>Rank Page</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <!-- Uncomment this section if needed -->
-  <!--
-  <form [formGroup]="groupForm">
-    <ion-item>
-      <ion-label position="floating">Group Name</ion-label>
-      <ion-input formControlName="groupName"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Description</ion-label>
-      <ion-input formControlName="description"></ion-input>
-    </ion-item>
-    <ion-button expand="full" (click)="createGroup(groupForm.value.groupName, groupForm.value.description)">
-      Create Group
-    </ion-button>
-  </form>
-  -->
+  <!-- Dropdown Menu -->
+  <ion-item>
+    <ion-label>Select User</ion-label>
+    <ion-select (ionChange)="navigateToRankingPage($event)">
+      <ion-select-option value="user1">User 1</ion-select-option>
+      <ion-select-option value="user2">User 2</ion-select-option>
+      <ion-select-option value="user3">User 3</ion-select-option>
+    </ion-select>
+  </ion-item>
 
-  <ion-button expand="full" (click)="toggleTop5()">Toggle Top 5 Groups</ion-button>
-  <ion-button expand="full" (click)="toggleDetailedReport()">Toggle Detailed Report</ion-button>
-
-  <ion-card *ngIf="showTop5">
+  <!-- Top 5 Table -->
+  <ion-card>
     <ion-card-header>
-      <ion-card-title>Top 5 Groups</ion-card-title>
+      <ion-card-title>Top 5</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-grid>
         <ion-row>
-          <ion-col>#</ion-col>
-          <ion-col>Group Name</ion-col>
-          <ion-col>Average Score</ion-col>
+          <ion-col size="3"><strong>Rank</strong></ion-col>
+          <ion-col size="9"><strong>Group Name</strong></ion-col>
         </ion-row>
-        <ion-row *ngFor="let group of rankings | slice:0:5; let i = index">
-          <ion-col>{{ i + 1 }}</ion-col>
-          <ion-col>{{ group.groupName }}</ion-col>
-          <ion-col>{{ group.overallAverage.toFixed(2) }}</ion-col>
+        <ion-row *ngFor="let item of top5Items">
+          <ion-col size="3">{{item.rank}}</ion-col>
+          <ion-col size="9">{{item.groupName}}</ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="showDetailedReport">
+  <!-- Detailed Reports Table -->
+  <ion-card>
     <ion-card-header>
-      <ion-card-title>Detailed Report</ion-card-title>
+      <ion-card-title>Detailed Reports</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-grid>
         <ion-row>
-          <ion-col>#</ion-col>
-          <ion-col>Group Name</ion-col>
-          <ion-col>Marker ID</ion-col>
-          <ion-col>Business Plan Score</ion-col>
-          <ion-col>Marketing Plan Score</ion-col>
-          <ion-col>Web Page Score</ion-col>
+          <ion-col size="3"><strong>Group Name</strong></ion-col>
+          <ion-col size="3"><strong>Business Idea Score</strong></ion-col>
+          <ion-col size="3"><strong>Marketing Score</strong></ion-col>
+          <ion-col size="3"><strong>Web Score</strong></ion-col>
         </ion-row>
-        <ion-row *ngFor="let group of rankings; let i = index">
-          <ion-col>{{ i + 1 }}</ion-col>
-          <ion-col>{{ group.groupName }}</ion-col>
-          <ion-row *ngFor="let evaluation of group.evaluations">
-            <ion-col>{{ evaluation.markerId }}</ion-col>
-            <ion-col>{{ evaluation.businessPlanScore }}</ion-col>
-            <ion-col>{{ evaluation.marketingPlanScore }}</ion-col>
-            <ion-col>{{ evaluation.webPageScore }}</ion-col>
-          </ion-row>
+        <ion-row *ngFor="let report of detailedReports">
+          <ion-col size="3">{{report.groupName}}</ion-col>
+          <ion-col size="3">{{report.businessIdeaScore}}</ion-col>
+          <ion-col size="3">{{report.marketingScore}}</ion-col>
+          <ion-col size="3">{{report.webScore}}</ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-content>

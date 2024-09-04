@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Group Rankings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngIf="!error">
+    <ion-card-header>
+      <ion-card-title>Group Rankings</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Business Idea Score</th>
+            <th>Marketing Score</th>
+            <th>Web Score</th>
+            <th>Average</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let group of groupScores">
+            <td>{{ group.groupName }}</td>
+            <td>{{ group.averageBusinessPlanScore | number: '1.2-2' }}</td>
+            <td>{{ group.averageMarketingPlanScore | number: '1.2-2' }}</td>
+            <td>{{ group.averageWebPageScore | number: '1.2-2' }}</td>
+            <td>{{ group.average | number: '1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- <p *ngIf="groupScores.length === 0">No group scores available.</p> -->
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="error">
+    <ion-card-header>
+      <ion-card-title>Error</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ error }}</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

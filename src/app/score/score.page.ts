@@ -23,6 +23,7 @@ export class ScorePage implements OnInit {
   updateGroupDescription: string = '';
   deleteGroupId: string = '';
   loading: boolean = false;
+  userEmail: string | null = null;  // Property to store the user's email
 
   constructor(
     private firestore: AngularFirestore,
@@ -33,6 +34,7 @@ export class ScorePage implements OnInit {
 
   ngOnInit() {
     this.loadGroups();
+    this.loadUserEmail();  // Load the user's email when the component initializes
   }
 
   loadGroups() {
@@ -50,27 +52,31 @@ export class ScorePage implements OnInit {
     );
   }
 
+  async loadUserEmail() {
+    this.userEmail = await this.authService.getUserEmail();
+  }
+
   async submitScores() {
     if (!this.selectedGroupId || this.businessPlanScore === null || this.marketingPlanScore === null || this.webPageScore === null) {
       this.presentToast('Please fill out all fields', 'danger');
       return;
     }
-  
-    // Find the selected group name based on the selectedGroupId
+
     const selectedGroup = this.groups.find(group => group.id === this.selectedGroupId);
     if (!selectedGroup) {
       this.presentToast('Group not found', 'danger');
       return;
     }
-  
+
     const scores = {
-      groupName: selectedGroup.groupName, // Use the group name instead of the ID
+      groupName: selectedGroup.groupName,
       businessPlanScore: this.businessPlanScore,
       marketingPlanScore: this.marketingPlanScore,
       webPageScore: this.webPageScore,
       timestamp: new Date(),
+      email: this.userEmail
     };
-  
+
     try {
       await this.firestore.collection('Marking').add(scores);
       this.presentToast('Scores submitted successfully!', 'success');
@@ -80,6 +86,7 @@ export class ScorePage implements OnInit {
       this.presentToast('Error submitting scores', 'danger');
     }
   }
+  
   
 
   async addGroup() {

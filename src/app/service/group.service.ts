@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GroupService {
+  [x: string]: any;
 
   private groupsCollection = this.firestore.collection('Groups');
 
