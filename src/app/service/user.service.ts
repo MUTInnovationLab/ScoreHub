@@ -12,22 +12,23 @@ export class UserService {
   constructor(private firestore: AngularFirestore) {}
 
   // Add user details to the Users collection with a custom ID
-  addUser(user: any): Promise<void> {
-    return this.usersCollection.doc(user.userId).set(user); // Use userId as the document ID
+  // Method to add user to Firestore with a custom document ID (staffNumber)
+  addUser(user: any, staffNumber: string) {
+    return this.firestore.collection('Users').doc(staffNumber).set(user);
   }
 
   // Get user details by ID
-  getUser(userId: string): Observable<any> {
-    return this.usersCollection.doc(userId).valueChanges();
+  getUser(staffNumber: string): Observable<any> {
+    return this.usersCollection.doc(staffNumber).valueChanges();
   }
 
   // Update user details
-  updateUser(userId: string, user: any): Promise<void> {
-    return this.usersCollection.doc(userId).update(user);
+  updateUser(staffNumber: string, user: any): Promise<void> {
+    return this.usersCollection.doc(staffNumber).update(user);
   }
 
   // Delete a user
-  deleteUser(userId: string): Promise<void> {
-    return this.usersCollection.doc(userId).delete();
+  deleteUser(staffNumber: string): Promise<void> {
+    return this.usersCollection.doc(staffNumber).delete();
   }
 }
