@@ -43,7 +43,6 @@ export class RankPage implements OnInit {
   searchGroupName: string = '';
   searchMarkerEmail: string = '';
 
-
   constructor(private firestore: AngularFirestore) {}
 
   ngOnInit() {
@@ -53,13 +52,14 @@ export class RankPage implements OnInit {
 
   fetchRankings() {
     this.firestore.collection<Marking>('Marking').valueChanges().subscribe((data: Marking[]) => {
-      // Map data to detailed reports
+      // Map data to detailed reports with weighted averages
       this.detailedReports = data.map(item => ({
         groupName: item.groupName,
         businessPlanScore: item.businessPlanScore,
         marketingPlanScore: item.marketingPlanScore,
         webPageScore: item.webPageScore,
-        averageScore: (item.businessPlanScore + item.marketingPlanScore + item.webPageScore) / 3
+        // Calculate the weighted average score based on specified thresholds
+        averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore)
       }));
 
       this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
@@ -68,6 +68,31 @@ export class RankPage implements OnInit {
       this.updatePaginatedReports();
       this.calculateTop5();
     });
+  }
+
+  calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
+    // Convert raw scores to percentages based on the thresholds provided
+
+    // Business Plan Scoring
+    const businessPlanPercent = this.mapScoreToPercentage(businessPlanScore, [12, 18, 24, 30], [40, 60, 80, 100]);
+
+    // Marketing Plan Scoring
+    const marketingPlanPercent = this.mapScoreToPercentage(marketingPlanScore, [4, 6, 8, 10], [40, 60, 80, 100]);
+
+    // Web Page Scoring
+    const webPagePercent = this.mapScoreToPercentage(webPageScore, [4, 6, 8, 10], [40, 60, 80, 100]);
+
+    // Calculate the overall average percentage out of 100
+    return (businessPlanPercent + marketingPlanPercent + webPagePercent) / 3;
+  }
+
+  mapScoreToPercentage(score: number, thresholds: number[], percentages: number[]): number {
+    for (let i = thresholds.length - 1; i >= 0; i--) {
+      if (score >= thresholds[i]) {
+        return percentages[i];
+      }
+    }
+    return 0; // Default to 0 if score is below the first threshold
   }
 
   calculateTop5() {
@@ -110,7 +135,8 @@ export class RankPage implements OnInit {
     this.averages.businessPlanAvg = totalBusinessPlanScore / totalReports;
     this.averages.marketingPlanAvg = totalMarketingPlanScore / totalReports;
     this.averages.webPageAvg = totalWebPageScore / totalReports;
-    this.averages.criterionAverage = (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg) / 3;
+    // Calculate the overall criterion average using the new percentages
+    this.averages.criterionAverage = this.calculateWeightedAverage(this.averages.businessPlanAvg, this.averages.marketingPlanAvg, this.averages.webPageAvg);
   }
 
   searchDetailedReports() {
@@ -199,7 +225,6 @@ export class RankPage implements OnInit {
     }
   }
   
-
   toggleMarkerEvaluations() {
     this.showMarkerEvaluations = !this.showMarkerEvaluations;
   }
