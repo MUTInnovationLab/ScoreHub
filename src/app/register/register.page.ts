@@ -33,7 +33,7 @@ export class RegisterPage implements OnInit {
     this.navCtrl.navigateForward("/login");
   }
 
-  async register() {
+  /*async register() {
     if (this.email === "") {
       this.presentAlert("Error", "Please enter your email.");
       return;
@@ -67,7 +67,7 @@ export class RegisterPage implements OnInit {
           userId: this.userId
         };
 
-        this.userService.addUser(user)
+       this.userService.addUser(user)
           .then(() => {
             loader.dismiss();
             this.router.navigateByUrl("/login");
@@ -117,5 +117,6 @@ export class RegisterPage implements OnInit {
     } else {
       this.presentAlert("Error", errorMessage);
     }
-  }
+  }*/
 }
+  

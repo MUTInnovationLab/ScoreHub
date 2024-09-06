@@ -1,24 +1,73 @@
 <ion-content [fullscreen]="true">
   <form (ngSubmit)="submitForm()" class="form">
     <p class="title">ScoreHUB</p>
-    <p class="message">Add Group to ScoreHUB</p>
-    <div class="flex">
+    <p class="message">Add Group or User</p>
+
+    <!-- Toggle for selecting Group or User -->
+    <ion-segment [(ngModel)]="addOption" name="addOption">
+      <ion-segment-button value="group">
+        Add Group
+      </ion-segment-button>
+      <ion-segment-button value="user">
+        Add User
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Group Form -->
+    <div *ngIf="addOption === 'group'" class="group-form">
+      <div class="flex">
+        <ion-item>
+          <ion-label>Select Group</ion-label>
+          <ion-select [(ngModel)]="selectedGroupId" (ngModelChange)="onGroupChange($event)" name="selectedGroupId">
+            <ion-select-option *ngFor="let group of groups" [value]="group.groupId">
+              {{ group.groupName }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <label>
+          <input required placeholder="" type="text" class="input" [(ngModel)]="groupId" name="groupId" [readonly]="selectedGroupId">
+          <span>Group ID</span>
+        </label>
+
+        <label>
+          <input required placeholder="" type="text" class="input" [(ngModel)]="groupName" name="groupName">
+          <span>Group Name</span>
+        </label>
+
+        <label>
+          <textarea required placeholder="" class="input" [(ngModel)]="description" name="description"></textarea>
+          <span>Description</span>
+        </label>
+      </div>
+      <button (click)="updateGroup()" class="action-button update">Update Group</button>
+      <button (click)="deleteGroup()" class="action-button delete">Delete Group</button>
+    </div>
+
+    <!-- User Form -->
+    <div *ngIf="addOption === 'user'" class="user-form">
       <label>
-        <input required placeholder="" type="text" class="input" [(ngModel)]="groupId" name="groupId">
-        <span>Group ID</span>
+        <input required placeholder="" type="text" class="input" [(ngModel)]="name" name="name">
+        <span>Name</span>
       </label>
 
       <label>
-        <input required placeholder="" type="text" class="input" [(ngModel)]="groupName" name="groupName">
-        <span>Group Name</span>
+        <input required placeholder="" type="text" class="input" [(ngModel)]="staffNumber" name="staffNumber">
+        <span>Staff Number</span>
+      </label>
+
+      <label>
+        <input required placeholder="" type="email" class="input" [(ngModel)]="email" name="email">
+        <span>Email</span>
+      </label>
+
+      <label>
+        <input required placeholder="" type="text" class="input" [(ngModel)]="lastName" name="lastName">
+        <span>Last Name</span>
       </label>
     </div>
 
-    <label>
-      <input required placeholder="" type="text" class="input" [(ngModel)]="description" name="description">
-      <span>Description</span>
-    </label>
-
     <button type="submit" class="submit">Submit</button>
+    <button type="button" (click)="logout()" class="logout-button">Logout</button>
   </form>
 </ion-content>

@@ -1,45 +1,53 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+// Define a type for the group
+export interface Group {
+  groupId: string;
+  groupName: string;
+  description: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
-  [x: string]: any;
-
-  private groupsCollection = this.firestore.collection('Groups');
 
   constructor(private firestore: AngularFirestore) {}
 
-  // Add a new group
-  addGroup(group: any): Promise<void> {
-    const { id } = group;
-    return this.groupsCollection.doc(id).set(group);
-  }
-
   // Fetch all groups
-  getGroups(): Observable<any[]> {
-    return this.groupsCollection.valueChanges();
+  getGroups(): Observable<Group[]> {
+    return this.firestore.collection<Group>('Groups').valueChanges().pipe(
+      catchError(error => {
+        console.error('Error fetching groups:', error);
+        throw error;
+      })
+    );
   }
 
-  // Get a group by ID
-  getGroup(id: string): Observable<any> {
-    return this.groupsCollection.doc(id).valueChanges();
+  // Add a new group
+  addGroup(group: Group): Promise<void> {
+    return this.firestore.collection('Groups').doc(group.groupId).set(group).catch(error => {
+      console.error('Error adding group:', error);
+      throw error;
+    });
   }
 
-  // Update a group
-  updateGroup(id: string, group: any): Promise<void> {
-    return this.groupsCollection.doc(id).update(group);
+  // Update an existing group
+  updateGroup(groupId: string, group: Partial<Group>): Promise<void> {
+    return this.firestore.collection('Groups').doc(groupId).update(group).catch(error => {
+      console.error('Error updating group:', error);
+      throw error;
+    });
   }
 
   // Delete a group
-  deleteGroup(id: string): Promise<void> {
-    return this.groupsCollection.doc(id).delete();
-  }
-
-  // Get all groups
-  getAllGroups(): Observable<any[]> {
-    return this.groupsCollection.valueChanges();
+  deleteGroup(groupId: string): Promise<void> {
+    return this.firestore.collection('Groups').doc(groupId).delete().catch(error => {
+      console.error('Error deleting group:', error);
+      throw error;
+    });
   }
 }
