@@ -26,7 +26,7 @@ ion-header {
   
   height: $header-height;
   background-color: $primary-color;
-  color: #833030;
+  color: #ac1c1c;
   box-shadow: 0 2px 4px rgba(137, 42, 43, 0.987);
 
   ion-toolbar {
@@ -43,7 +43,9 @@ ion-header {
 }
 
 p{
-  color: red;
+  color: rgb(205, 6, 6);
+  font-size: medium;
+  font-weight: bold;
   margin: 0px 0px 0px 30px;
 }
 

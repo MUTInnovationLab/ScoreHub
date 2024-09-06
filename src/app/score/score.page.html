@@ -2,19 +2,16 @@
   <ion-toolbar>
     <ion-title class="title">Score Evaluation</ion-title>
   </ion-toolbar>
+  
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Score Evaluation</ion-title>
-    </ion-toolbar>
-  </ion-header> -->
-
+ 
   <div class="page-container">
     <!-- Score Evaluation Form -->
     <form (ngSubmit)="submitScores()" #scoreForm="ngForm">
       <!-- Group Selection -->
+      <ion-button expand="full" (click)="goToRankings()">To Rankings</ion-button>
       <ion-item>
         <ion-label>Select Group</ion-label>
         <ion-select [(ngModel)]="selectedGroupId" name="group" required>
@@ -47,7 +44,7 @@
     </form>
 
     <!-- Add Group Form -->
-    <ion-card>
+    <!-- <ion-card>
       <ion-card-header>
         <ion-card-title>Add New Group</ion-card-title>
       </ion-card-header>
@@ -64,10 +61,10 @@
           <ion-button expand="full" type="submit" [disabled]="!addGroupForm.form.valid">Add Group</ion-button>
         </form>
       </ion-card-content>
-    </ion-card>
+    </ion-card> -->
 
     <!-- Update Group Form -->
-    <ion-card>
+    <!-- <ion-card>
       <ion-card-header>
         <ion-card-title>Update Group</ion-card-title>
       </ion-card-header>
@@ -92,10 +89,10 @@
           <ion-button expand="full" type="submit" [disabled]="!updateGroupForm.form.valid">Update Group</ion-button>
         </form>
       </ion-card-content>
-    </ion-card>
+    </ion-card> -->
 
     <!-- Delete Group Form -->
-    <ion-card>
+    <!-- <ion-card>
       <ion-card-header>
         <ion-card-title>Delete Group</ion-card-title>
       </ion-card-header>
@@ -112,6 +109,6 @@
           <ion-button expand="full" type="submit" [disabled]="!deleteGroupForm.form.valid">Delete Group</ion-button>
         </form>
       </ion-card-content>
-    </ion-card>
+    </ion-card> -->
   </div>
 </ion-content>

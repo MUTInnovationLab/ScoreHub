@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AuthService } from '../services/auth.service';
 import { ToastController } from '@ionic/angular';
 import { GroupService, Group } from '../services/group.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-score',
@@ -29,6 +30,7 @@ export class ScorePage implements OnInit {
     private firestore: AngularFirestore,
     private authService: AuthService,
     private groupService: GroupService,
+    private router: Router,
     private toastController: ToastController
   ) {}
 
@@ -179,5 +181,9 @@ export class ScorePage implements OnInit {
     this.businessPlanScore = null;
     this.marketingPlanScore = null;
     this.webPageScore = null;
+  }
+
+  goToRankings(){
+    this.router.navigate(['/rank']);
   }
 }
