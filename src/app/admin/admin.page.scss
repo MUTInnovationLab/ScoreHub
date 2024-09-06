@@ -139,3 +139,21 @@ ion-select {
 .group-form .action-button.delete {
     margin-bottom: 20px; /* Adds space below the Delete Group button */
 }
+
+.logout-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #d9534f; /* Red color for logout button */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px; /* Space between Submit button and Logout button */
+}
+
+.logout-button:hover {
+    background-color: #c9302c; /* Slightly darker shade for hover */
+}
