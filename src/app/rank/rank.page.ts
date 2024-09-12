@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+// import { catchError, of } from 'rxjs';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -11,12 +12,13 @@ interface User {
 }
 
 interface Marking {
+  markerEmail: any;
   businessPlanScore: number;
   email: string;
   groupName: string;
   marketingPlanScore: number;
   webPageScore: number;
-  markerEmail: string;
+  // markerEmail: string;
 }
 
 @Component({
@@ -61,6 +63,7 @@ export class RankPage implements OnInit {
     this.fetchMarkersAndEvaluations();
   }
 
+
   fetchRankings() {
     this.firestore.collection<Marking>('Marking').valueChanges()
       .pipe(
@@ -88,9 +91,8 @@ export class RankPage implements OnInit {
   }  
   
   calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
-    return (businessPlanScore + marketingPlanScore + webPageScore);
-  }  
-
+    return (businessPlanScore + marketingPlanScore + webPageScore) ;
+  }
   mapScoreToPercentage(score: number, thresholds: number[], percentages: number[]): number {
     for (let i = thresholds.length - 1; i >= 0; i--) {
       if (score >= thresholds[i]) {
@@ -122,7 +124,6 @@ export class RankPage implements OnInit {
     this.paginatedReports = this.detailedReports.filter(report => report.groupName === currentGroupName);
     this.calculateAverages();
   }
-
   calculateAverages() {
     if (this.paginatedReports.length === 0) {
       this.averages = { businessPlanAvg: 0, marketingPlanAvg: 0, webPageAvg: 0, criterionAverage: 0 };

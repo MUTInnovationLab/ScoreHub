@@ -38,58 +38,55 @@
   </ion-card>
 
   <!-- Detailed Reports -->
-<ion-card *ngIf="!showMarkerEvaluations">
-  <ion-card-header>
-    <ion-card-title>Detailed Reports</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <table class="ranking-table">
-      <thead>
-        <tr>
-          <th>Email</th> <!-- Add this column -->
-          <th>Group Name</th>
-          <th>Business Plan Score</th>
-          <th>Marketing Plan Score</th>
-          <th>Web Page Score</th>
-          <th>Average Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let report of paginatedReports">
-          <td>{{ report.email }}</td> <!-- Add this cell -->
-          <td>{{ report.groupName }}</td>
-          <td>{{ report.businessPlanScore | number: '1.2-2' }}</td>
-          <td>{{ report.marketingPlanScore | number: '1.2-2' }}</td>
-          <td>{{ report.webPageScore | number: '1.2-2' }}</td>
-          <td>{{ report.averageScore | number: '1.2-2' }}</td>
-        </tr>
-        <!-- Criterion Averages Row -->
-        <tr>
-          <td><strong>Criterion Average</strong></td>
-          <td></td> <!-- Empty cell for alignment -->
-          <td>{{ averages.businessPlanAvg | number: '1.2-2' }}</td>
-          <td>{{ averages.marketingPlanAvg | number: '1.2-2' }}</td>
-          <td>{{ averages.webPageAvg | number: '1.2-2' }}</td>
-          <td>{{ averages.criterionAverage | number: '1.2-2' }}</td>
-        </tr>
-        <!-- Overall Average Row -->
-        <tr>
-          <td colspan="6" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
-        </tr>
-      </tbody>
-    </table>
+  <ion-card *ngIf="!showMarkerEvaluations">
+    <ion-card-header>
+      <ion-card-title>Detailed Reports</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Group Name</th>
+            <th>Business Plan Score</th>
+            <th>Marketing Plan Score</th>
+            <th>Web Page Score</th>
+            <th>Average Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of paginatedReports">
+            <td>{{ report.groupName }}</td>
+            <td>{{ report.businessPlanScore | number: '1.2-2' }}</td>
+            <td>{{ report.marketingPlanScore | number: '1.2-2' }}</td>
+            <td>{{ report.webPageScore | number: '1.2-2' }}</td>
+            <td>{{ report.averageScore | number: '1.2-2' }}</td>
+          </tr>
+          <!-- Criterion Averages Row -->
+          <tr>
+            <td><strong>Criterion Average</strong></td>
+            <td>{{ averages.businessPlanAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.marketingPlanAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.webPageAvg | number: '1.2-2' }}</td>
+            <td>{{ averages.criterionAverage | number: '1.2-2' }}</td>
+          </tr>
+          <!-- Overall Average Row -->
+          <tr>
+            <td colspan="5" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- Pagination Controls -->
-    <div class="pagination-controls">
-      <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
-        <ion-icon name="chevron-back"></ion-icon>
-      </ion-button>
-      <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
+      <!-- Pagination Controls -->
+      <div class="pagination-controls">
+        <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
   <!-- Marker Evaluations Search Card -->
   <ion-card *ngIf="showMarkerEvaluations">

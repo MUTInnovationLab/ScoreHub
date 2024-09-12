@@ -16,10 +16,7 @@ const routes: Routes = [
     path: 'reset',
     loadChildren: () => import('./reset/reset.module').then( m => m.ResetPageModule)
   },
-  {
-    path: 'register',
-    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
-  },
+ 
   {
     path: 'score',
     loadChildren: () => import('./score/score.module').then( m => m.ScorePageModule)
