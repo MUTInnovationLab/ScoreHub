@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { catchError, of } from 'rxjs';
 
 interface User {
   email: string;
@@ -9,6 +10,7 @@ interface User {
 }
 
 interface Marking {
+  markerEmail: any;
   businessPlanScore: number;
   email: string;
   groupName: string;
@@ -50,42 +52,36 @@ export class RankPage implements OnInit {
     this.fetchMarkersAndEvaluations();
   }
 
+
   fetchRankings() {
-    this.firestore.collection<Marking>('Marking').valueChanges().subscribe((data: Marking[]) => {
-      // Map data to detailed reports with weighted averages
-      this.detailedReports = data.map(item => ({
-        groupName: item.groupName,
-        businessPlanScore: item.businessPlanScore,
-        marketingPlanScore: item.marketingPlanScore,
-        webPageScore: item.webPageScore,
-        // Calculate the weighted average score based on specified thresholds
-        averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore)
-      }));
-
-      this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
-      this.totalPages = this.uniqueGroups.length;
-
-      this.updatePaginatedReports();
-      this.calculateTop5();
-    });
-  }
-
+    this.firestore.collection<Marking>('Marking').valueChanges()
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching rankings:', error);
+          return of([]);
+        })
+      )
+      .subscribe((data: Marking[]) => {
+        this.detailedReports = data.map(item => ({
+          email: item.email,
+          groupName: item.groupName,
+          businessPlanScore: item.businessPlanScore,
+          marketingPlanScore: item.marketingPlanScore,
+          webPageScore: item.webPageScore,
+          averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore),
+          markerEmail: item.markerEmail
+        }));
+  
+        this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
+        this.totalPages = this.uniqueGroups.length;
+        this.updatePaginatedReports();
+        this.calculateTop5();
+      });
+  }  
+  
   calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
-    // Convert raw scores to percentages based on the thresholds provided
-
-    // Business Plan Scoring
-    const businessPlanPercent = this.mapScoreToPercentage(businessPlanScore, [12, 18, 24, 30], [40, 60, 80, 100]);
-
-    // Marketing Plan Scoring
-    const marketingPlanPercent = this.mapScoreToPercentage(marketingPlanScore, [4, 6, 8, 10], [40, 60, 80, 100]);
-
-    // Web Page Scoring
-    const webPagePercent = this.mapScoreToPercentage(webPageScore, [4, 6, 8, 10], [40, 60, 80, 100]);
-
-    // Calculate the overall average percentage out of 100
-    return (businessPlanPercent + marketingPlanPercent + webPagePercent) / 3;
+    return (businessPlanScore + marketingPlanScore + webPageScore) ;
   }
-
   mapScoreToPercentage(score: number, thresholds: number[], percentages: number[]): number {
     for (let i = thresholds.length - 1; i >= 0; i--) {
       if (score >= thresholds[i]) {
@@ -120,23 +116,24 @@ export class RankPage implements OnInit {
     this.paginatedReports = this.detailedReports.filter(report => report.groupName === currentGroupName);
     this.calculateAverages();
   }
-
   calculateAverages() {
     if (this.paginatedReports.length === 0) {
       this.averages = { businessPlanAvg: 0, marketingPlanAvg: 0, webPageAvg: 0, criterionAverage: 0 };
       return;
     }
-
+  
     const totalBusinessPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.businessPlanScore, 0);
     const totalMarketingPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.marketingPlanScore, 0);
     const totalWebPageScore = this.paginatedReports.reduce((acc, report) => acc + report.webPageScore, 0);
     const totalReports = this.paginatedReports.length;
-
+  
     this.averages.businessPlanAvg = totalBusinessPlanScore / totalReports;
     this.averages.marketingPlanAvg = totalMarketingPlanScore / totalReports;
     this.averages.webPageAvg = totalWebPageScore / totalReports;
-    // Calculate the overall criterion average using the new percentages
-    this.averages.criterionAverage = this.calculateWeightedAverage(this.averages.businessPlanAvg, this.averages.marketingPlanAvg, this.averages.webPageAvg);
+  
+    // Calculate the overall average by adding all criterion averages and dividing by 3
+    this.averages.criterionAverage = 
+      (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg);
   }
 
   searchDetailedReports() {

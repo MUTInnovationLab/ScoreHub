@@ -46,6 +46,7 @@
       <table class="ranking-table">
         <thead>
           <tr>
+            <th>Email</th> <!-- Add this column -->
             <th>Group Name</th>
             <th>Business Plan Score</th>
             <th>Marketing Plan Score</th>
@@ -55,6 +56,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let report of paginatedReports">
+            <td>{{ report.email }}</td> <!-- Add this cell -->
             <td>{{ report.groupName }}</td>
             <td>{{ report.businessPlanScore | number: '1.2-2' }}</td>
             <td>{{ report.marketingPlanScore | number: '1.2-2' }}</td>
@@ -64,6 +66,7 @@
           <!-- Criterion Averages Row -->
           <tr>
             <td><strong>Criterion Average</strong></td>
+            <td></td> <!-- Empty cell for alignment -->
             <td>{{ averages.businessPlanAvg | number: '1.2-2' }}</td>
             <td>{{ averages.marketingPlanAvg | number: '1.2-2' }}</td>
             <td>{{ averages.webPageAvg | number: '1.2-2' }}</td>
@@ -71,11 +74,11 @@
           </tr>
           <!-- Overall Average Row -->
           <tr>
-            <td colspan="5" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
+            <td colspan="6" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
           </tr>
         </tbody>
       </table>
-
+  
       <!-- Pagination Controls -->
       <div class="pagination-controls">
         <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
@@ -87,6 +90,8 @@
       </div>
     </ion-card-content>
   </ion-card>
+  
+  
 
   <!-- Marker Evaluations Search Card -->
   <ion-card *ngIf="showMarkerEvaluations">

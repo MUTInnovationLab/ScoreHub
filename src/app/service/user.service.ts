@@ -13,6 +13,8 @@ export class UserService {
 
   // Add user details to the Users collection with a custom ID
   addUser(user: any, staffNumber: string): Promise<void> {
+    // Ensure email is saved in lowercase
+    user.email = user.email.toLowerCase();
     return this.firestore.collection('Users').doc(staffNumber).set(user);
   }
 

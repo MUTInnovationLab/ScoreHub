@@ -1,9 +1,8 @@
-
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController, NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { FirebaseError } from '@firebase/util'; // Import FirebaseError
+import { FirebaseError } from '@firebase/util'; 
 
 @Component({
   selector: 'app-login',
@@ -12,12 +11,12 @@ import { FirebaseError } from '@firebase/util'; // Import FirebaseError
 })
 export class LoginPage implements OnInit {
   email: string = '';
-  password: string = ''; // This will be the staffNumber
+  password: string = ''; // This will be the staffNumber for regular users
   emailRegex: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   // Admin credentials
-  adminDomain: string = '@mut.ac.za'; // Admin email domain
-  defaultAdminPassword: string = 'Room16'; // Admin default password
+  adminEmail: string = 'admin@mut.ac.za'; // Full Admin email
+  adminPassword: string = 'Room16'; // Admin default password
 
   constructor(
     private db: AngularFirestore,
@@ -50,21 +49,32 @@ export class LoginPage implements OnInit {
     try {
       await loader.present();
 
-      // Check if the email belongs to an admin and if they are using the default admin password
-      if (this.email.endsWith(this.adminDomain) && this.password === this.defaultAdminPassword) {
+      // Check if the email is admin and the password is admin's default password
+      if (this.email === this.adminEmail && this.password === this.adminPassword) {
         loader.dismiss();
         this.navController.navigateForward('/admin'); // Navigate to admin page
         return;
       }
 
-      // Regular user login
-      const isUserValid = await this.checkUserStaffNumber(this.email, this.password);
-      if (isUserValid) {
-        loader.dismiss();
-        this.navController.navigateForward('/score'); // Navigate to score page for regular users
+      // Regular user login with Firestore validation
+      const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
+      const currentUser = await this.auth.currentUser;
+
+      if (currentUser) {
+        const userEmail = currentUser.email;
+        console.log('Logged in user email:', userEmail);
+
+        const isUserValid = await this.checkUserStaffNumber(userEmail!, this.password);
+        if (isUserValid) {
+          loader.dismiss();
+          this.navController.navigateForward('/score'); // Navigate to score page for regular users
+        } else {
+          loader.dismiss();
+          this.presentToast('Invalid staff number or no user found. Please contact support.');
+        }
       } else {
         loader.dismiss();
-        this.presentToast('Invalid staff number or no user found. Please contact support.');
+        this.presentToast('Unable to fetch user data. Please try again.');
       }
     } catch (error: any) {
       loader.dismiss();
@@ -81,18 +91,29 @@ export class LoginPage implements OnInit {
   // Method to check if user exists in Firestore and validate staffNumber
   async checkUserStaffNumber(email: string, staffNumber: string): Promise<boolean> {
     try {
+      console.log(`Email input: ${email}`);
+      console.log(`StaffNumber input: ${staffNumber}`);
+      
+      // Ensure case-insensitive match by converting both Firestore and input email to lowercase
       const userDoc = await this.db.collection('Users').ref
-        .where('email', '==', email)
+        .where('email', '==', email.toLowerCase())  // Make sure to store email in lowercase in Firestore
         .where('staffNumber', '==', staffNumber)
         .limit(1)
         .get();
-      return !userDoc.empty; // Return true if a user with the given email and staffNumber is found in Firestore
+  
+      if (userDoc.empty) {
+        console.log('No user found with the provided email and staff number.');
+        return false; // User not found
+      } else {
+        console.log('User found:', userDoc.docs[0].data());
+        return true; // User found
+      }
     } catch (error) {
       console.error('Error checking user in Firestore:', error);
       return false;
     }
   }
-
+  
   async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
