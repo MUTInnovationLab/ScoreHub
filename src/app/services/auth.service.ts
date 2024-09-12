@@ -18,10 +18,11 @@ export class AuthService {
     return user ? user.uid : null;
   }
 
-  async getUserEmail(): Promise<string | null> {
+  async getUserData(): Promise<User | null> {
     const user = await this.afAuth.currentUser;
-    return (user as User | null)?.email || null;
+    return user as User | null;
   }
+  
 
   getGroups(): Observable<any[]> {
     return this.firestore.collection('Groups').valueChanges();

@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 interface User {
   email: string;
   name: string;
-  role: string;
-  userId: string;
+  lastName: string;
+  staffNumber: string;
 }
 
 interface Marking {
@@ -14,6 +16,7 @@ interface Marking {
   groupName: string;
   marketingPlanScore: number;
   webPageScore: number;
+  markerEmail: string;
 }
 
 @Component({
@@ -23,12 +26,20 @@ interface Marking {
 })
 export class RankPage implements OnInit {
   top5Items: { rank: number, groupName: string, averageScore: number }[] = [];
-  detailedReports: { groupName: string, businessPlanScore: number, marketingPlanScore: number, webPageScore: number, averageScore: number }[] = [];
+  detailedReports: {
+    email: string;
+    groupName: string;
+    businessPlanScore: number;
+    marketingPlanScore: number;
+    webPageScore: number;
+    averageScore: number;
+    markerEmail: string;
+  }[] = [];
   paginatedReports: any[] = [];
   currentPage: number = 0;
   totalPages: number = 1;
   uniqueGroups: string[] = [];
-  averages: { businessPlanAvg: number, marketingPlanAvg: number, webPageAvg: number, criterionAverage: number } = {
+  averages = {
     businessPlanAvg: 0,
     marketingPlanAvg: 0,
     webPageAvg: 0,
@@ -36,7 +47,7 @@ export class RankPage implements OnInit {
   };
   showMarkerEvaluations: boolean = false;
   markers: User[] = [];
-  markerEvaluations: { markerName: string, evaluations: Marking[] }[] = [];
+  markerEvaluations: { markerName: string; evaluations: Marking[] }[] = [];
   currentMarkerIndex: number = 0;
   currentMarkerEvaluations: Marking[] = [];
   currentMarkerName: string = '';
@@ -51,40 +62,34 @@ export class RankPage implements OnInit {
   }
 
   fetchRankings() {
-    this.firestore.collection<Marking>('Marking').valueChanges().subscribe((data: Marking[]) => {
-      // Map data to detailed reports with weighted averages
-      this.detailedReports = data.map(item => ({
-        groupName: item.groupName,
-        businessPlanScore: item.businessPlanScore,
-        marketingPlanScore: item.marketingPlanScore,
-        webPageScore: item.webPageScore,
-        // Calculate the weighted average score based on specified thresholds
-        averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore)
-      }));
-
-      this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
-      this.totalPages = this.uniqueGroups.length;
-
-      this.updatePaginatedReports();
-      this.calculateTop5();
-    });
-  }
-
+    this.firestore.collection<Marking>('Marking').valueChanges()
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching rankings:', error);
+          return of([]);
+        })
+      )
+      .subscribe((data: Marking[]) => {
+        this.detailedReports = data.map(item => ({
+          email: item.email,
+          groupName: item.groupName,
+          businessPlanScore: item.businessPlanScore,
+          marketingPlanScore: item.marketingPlanScore,
+          webPageScore: item.webPageScore,
+          averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore),
+          markerEmail: item.markerEmail
+        }));
+  
+        this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
+        this.totalPages = this.uniqueGroups.length;
+        this.updatePaginatedReports();
+        this.calculateTop5();
+      });
+  }  
+  
   calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
-    // Convert raw scores to percentages based on the thresholds provided
-
-    // Business Plan Scoring
-    const businessPlanPercent = this.mapScoreToPercentage(businessPlanScore, [12, 18, 24, 30], [40, 60, 80, 100]);
-
-    // Marketing Plan Scoring
-    const marketingPlanPercent = this.mapScoreToPercentage(marketingPlanScore, [4, 6, 8, 10], [40, 60, 80, 100]);
-
-    // Web Page Scoring
-    const webPagePercent = this.mapScoreToPercentage(webPageScore, [4, 6, 8, 10], [40, 60, 80, 100]);
-
-    // Calculate the overall average percentage out of 100
-    return (businessPlanPercent + marketingPlanPercent + webPagePercent) / 3;
-  }
+    return (businessPlanScore + marketingPlanScore + webPageScore);
+  }  
 
   mapScoreToPercentage(score: number, thresholds: number[], percentages: number[]): number {
     for (let i = thresholds.length - 1; i >= 0; i--) {
@@ -92,19 +97,16 @@ export class RankPage implements OnInit {
         return percentages[i];
       }
     }
-    return 0; // Default to 0 if score is below the first threshold
+    return 0;
   }
 
   calculateTop5() {
-    // Group by groupName and calculate the overall average for each group
-    const groupAverages: { groupName: string, averageScore: number }[] = this.uniqueGroups.map(groupName => {
+    const groupAverages = this.uniqueGroups.map(groupName => {
       const groupReports = this.detailedReports.filter(report => report.groupName === groupName);
       const totalAverageScore = groupReports.reduce((acc, report) => acc + report.averageScore, 0);
-      const overallAverage = totalAverageScore / groupReports.length;
-      return { groupName, averageScore: overallAverage };
+      return { groupName, averageScore: totalAverageScore / groupReports.length };
     });
 
-    // Sort the groups by their averageScore in descending order and take the top 5
     this.top5Items = groupAverages
       .sort((a, b) => b.averageScore - a.averageScore)
       .slice(0, 5)
@@ -126,36 +128,37 @@ export class RankPage implements OnInit {
       this.averages = { businessPlanAvg: 0, marketingPlanAvg: 0, webPageAvg: 0, criterionAverage: 0 };
       return;
     }
-
+  
     const totalBusinessPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.businessPlanScore, 0);
     const totalMarketingPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.marketingPlanScore, 0);
     const totalWebPageScore = this.paginatedReports.reduce((acc, report) => acc + report.webPageScore, 0);
     const totalReports = this.paginatedReports.length;
-
+  
     this.averages.businessPlanAvg = totalBusinessPlanScore / totalReports;
     this.averages.marketingPlanAvg = totalMarketingPlanScore / totalReports;
     this.averages.webPageAvg = totalWebPageScore / totalReports;
-    // Calculate the overall criterion average using the new percentages
-    this.averages.criterionAverage = this.calculateWeightedAverage(this.averages.businessPlanAvg, this.averages.marketingPlanAvg, this.averages.webPageAvg);
+  
+    // Calculate the overall average by adding all criterion averages and dividing by 3
+    this.averages.criterionAverage = 
+      (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg);
   }
+  
 
   searchDetailedReports() {
     if (this.searchGroupName.trim() === '') {
-      this.updatePaginatedReports(); // Reset to original if no search term
+      this.updatePaginatedReports();
       return;
     }
     
     this.paginatedReports = this.detailedReports.filter(report => 
       report.groupName.toLowerCase().includes(this.searchGroupName.toLowerCase())
     );
-  
-    // Update averages based on the filtered reports
     this.calculateAverages();
   }
-  
+
   searchMarkerEvaluations() {
     if (this.searchMarkerEmail.trim() === '') {
-      this.updateCurrentMarker(); // Reset to original if no search term
+      this.updateCurrentMarker();
       return;
     }
   
@@ -167,33 +170,65 @@ export class RankPage implements OnInit {
       this.currentMarkerEvaluations = filteredEvaluations.evaluations;
       this.currentMarkerName = filteredEvaluations.markerName;
     } else {
-      // Handle case where no evaluations match the search email
       this.currentMarkerEvaluations = [];
       this.currentMarkerName = '';
     }
-  }  
+  }
 
   fetchMarkersAndEvaluations() {
-    this.firestore.collection<User>('Users', ref => ref.where('role', '==', 'marker')).valueChanges().subscribe((users: User[]) => {
-      this.markers = users;
+    this.firestore.collection<User>('Users').valueChanges()
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching users:', error);
+          return of([]);
+        })
+      )
+      .subscribe((users: User[]) => {
+        this.markers = users;
+        const markerObservables = this.markers.map(marker =>
+          this.firestore.collection<Marking>('Marking', ref => ref.where('markerEmail', '==', marker.email)).valueChanges().pipe(
+            map((evaluations: Marking[]) => ({
+              markerName: marker.name,
+              evaluations
+            })),
+            catchError(error => {
+              console.error(`Error fetching evaluations for ${marker.email}:`, error);
+              return of({ markerName: marker.name, evaluations: [] });
+            })
+          )
+        );
 
-      // Fetch evaluations for each marker
-      this.markers.forEach(marker => {
-        this.firestore.collection<Marking>('Marking', ref => ref.where('email', '==', marker.email)).valueChanges().subscribe((evaluations: Marking[]) => {
-          this.markerEvaluations.push({
-            markerName: marker.name,
-            evaluations
-          });
+        forkJoin(markerObservables).subscribe((evaluationsList: { markerName: string, evaluations: Marking[] }[]) => {
+          this.markerEvaluations = evaluationsList;
           this.updateCurrentMarker();
+        }, error => {
+          console.error('Error fetching marker evaluations:', error);
         });
       });
-    });
   }
 
   updateCurrentMarker() {
     if (this.markerEvaluations.length > 0) {
-      this.currentMarkerEvaluations = this.markerEvaluations[this.currentMarkerIndex].evaluations;
-      this.currentMarkerName = this.markerEvaluations[this.currentMarkerIndex].markerName;
+      const currentMarker = this.markerEvaluations[this.currentMarkerIndex];
+      this.currentMarkerEvaluations = currentMarker.evaluations;
+      this.currentMarkerName = currentMarker.markerName;
+    } else {
+      this.currentMarkerEvaluations = [];
+      this.currentMarkerName = '';
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.updatePaginatedReports();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.updatePaginatedReports();
     }
   }
 
@@ -211,21 +246,8 @@ export class RankPage implements OnInit {
     }
   }
 
-  previousPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.updatePaginatedReports();
-    }
-  }
-  
-  nextPage() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.updatePaginatedReports();
-    }
-  }
-  
   toggleMarkerEvaluations() {
     this.showMarkerEvaluations = !this.showMarkerEvaluations;
   }
+  
 }
