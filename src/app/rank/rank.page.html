@@ -2,6 +2,10 @@
   <!-- Top 5 Rankings -->
   <ion-card *ngIf="!showMarkerEvaluations">
     <ion-card-header>
+      <ion-button class="back-button" fill="clear" (click)="goBackToScore()">
+        <ion-icon name="arrow-back" style="color: white;"></ion-icon>
+      </ion-button>
+      
       <ion-card-title>Top 5 Rankings</ion-card-title>
     </ion-card-header>
     <ion-card-content>
@@ -43,27 +47,39 @@
       <ion-card-title>Detailed Reports</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+    <ion-grid>
       <table class="ranking-table">
         <thead>
           <tr>
+            <!-- <th>#</th> -->
+            <th>Email</th> <!-- Add this column -->
             <th>Group Name</th>
             <th>Business Plan Score</th>
             <th>Marketing Plan Score</th>
             <th>Web Page Score</th>
             <th>Average Score</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let report of paginatedReports">
+          <tr *ngFor="let report of paginatedReports; let i = index">
+            <!-- <td>{{ i + 1 + currentPage * pageSize }}</td> -->
+            <td>{{ report.email }}</td> <!-- Add this cell -->
             <td>{{ report.groupName }}</td>
             <td>{{ report.businessPlanScore | number: '1.2-2' }}</td>
             <td>{{ report.marketingPlanScore | number: '1.2-2' }}</td>
             <td>{{ report.webPageScore | number: '1.2-2' }}</td>
             <td>{{ report.averageScore | number: '1.2-2' }}</td>
+            <td>
+              <ion-button fill="clear" (click)="deleteReport(i)">
+                <ion-icon name="trash" color="danger"></ion-icon>
+              </ion-button>
+            </td> 
           </tr>
           <!-- Criterion Averages Row -->
           <tr>
             <td><strong>Criterion Average</strong></td>
+            <td></td> <!-- Empty cell for alignment -->
             <td>{{ averages.businessPlanAvg | number: '1.2-2' }}</td>
             <td>{{ averages.marketingPlanAvg | number: '1.2-2' }}</td>
             <td>{{ averages.webPageAvg | number: '1.2-2' }}</td>
@@ -71,11 +87,12 @@
           </tr>
           <!-- Overall Average Row -->
           <tr>
-            <td colspan="5" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
+            <td colspan="8" class="overall-average"><strong>Overall Average: {{ averages.criterionAverage | number: '1.2-2' }}</strong></td>
           </tr>
         </tbody>
       </table>
-
+    </ion-grid>
+  
       <!-- Pagination Controls -->
       <div class="pagination-controls">
         <ion-button (click)="previousPage()" [disabled]="currentPage === 0">
@@ -87,64 +104,4 @@
       </div>
     </ion-card-content>
   </ion-card>
-
-  <!-- Marker Evaluations Search Card -->
-  <ion-card *ngIf="showMarkerEvaluations">
-    <ion-card-header>
-      <ion-searchbar 
-        [(ngModel)]="searchMarkerEmail" 
-        (ionInput)="searchMarkerEvaluations()" 
-        placeholder="Search by Marker Email">
-      </ion-searchbar>
-    </ion-card-header>
-  </ion-card>
-
-  <!-- Marker Evaluations -->
-  <ion-card *ngIf="showMarkerEvaluations">
-    <ion-card-header>
-      <ion-card-title>Marker Evaluations</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <table class="marker-evaluations-table">
-        <thead>
-          <tr>
-            <th>Marker Name</th>
-            <th>Group Name</th>
-            <th>Business Plan Score</th>
-            <th>Marketing Plan Score</th>
-            <th>Web Page Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let evaluation of currentMarkerEvaluations">
-            <td>{{ currentMarkerName }}</td>
-            <td>{{ evaluation.groupName }}</td>
-            <td>{{ evaluation.businessPlanScore }}</td>
-            <td>{{ evaluation.marketingPlanScore }}</td>
-            <td>{{ evaluation.webPageScore }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Pagination Controls -->
-      <div class="pagination-controls">
-        <ion-button (click)="previousMarker()" [disabled]="currentMarkerIndex === 0">
-          <ion-icon name="chevron-back"></ion-icon>
-        </ion-button>
-        <ion-button (click)="nextMarker()" [disabled]="currentMarkerIndex >= markerEvaluations.length - 1">
-          <ion-icon name="chevron-forward"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-buttons slot="end">
-      <ion-button (click)="toggleMarkerEvaluations()">
-        {{ showMarkerEvaluations ? 'Show Rankings' : 'Show Marker Evaluations' }}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>

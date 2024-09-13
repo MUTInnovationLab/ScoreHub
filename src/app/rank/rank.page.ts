@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 // import { catchError, of } from 'rxjs';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 interface User {
   email: string;
@@ -40,6 +41,7 @@ export class RankPage implements OnInit {
   paginatedReports: any[] = [];
   currentPage: number = 0;
   totalPages: number = 1;
+  pageSize: number = 10; // Set page size to 10
   uniqueGroups: string[] = [];
   averages = {
     businessPlanAvg: 0,
@@ -56,12 +58,28 @@ export class RankPage implements OnInit {
   searchGroupName: string = '';
   searchMarkerEmail: string = '';
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore, private router: Router,) {}
 
   ngOnInit() {
     this.fetchRankings();
     this.fetchMarkersAndEvaluations();
   }
+
+  goBackToScore(){
+    this.router.navigate(['/score']);
+  }
+
+  deleteReport(index: number) {
+    // Find the actual report to delete from the original detailedReports array
+    const reportToDelete = this.paginatedReports[index];
+  
+    // Remove the report from both the paginated reports and the detailedReports array
+    this.detailedReports = this.detailedReports.filter(report => report !== reportToDelete);
+    this.paginatedReports.splice(index, 1);
+  
+    // Update the averages after deletion
+    this.calculateAverages();
+  }  
 
 
   fetchRankings() {
@@ -157,25 +175,6 @@ export class RankPage implements OnInit {
     this.calculateAverages();
   }
 
-  searchMarkerEvaluations() {
-    if (this.searchMarkerEmail.trim() === '') {
-      this.updateCurrentMarker();
-      return;
-    }
-  
-    const filteredEvaluations = this.markerEvaluations.find(markerEval =>
-      markerEval.markerName.toLowerCase() === this.searchMarkerEmail.toLowerCase()
-    );
-  
-    if (filteredEvaluations) {
-      this.currentMarkerEvaluations = filteredEvaluations.evaluations;
-      this.currentMarkerName = filteredEvaluations.markerName;
-    } else {
-      this.currentMarkerEvaluations = [];
-      this.currentMarkerName = '';
-    }
-  }
-
   fetchMarkersAndEvaluations() {
     this.firestore.collection<User>('Users').valueChanges()
       .pipe(
@@ -231,24 +230,6 @@ export class RankPage implements OnInit {
       this.currentPage++;
       this.updatePaginatedReports();
     }
-  }
-
-  nextMarker() {
-    if (this.currentMarkerIndex < this.markerEvaluations.length - 1) {
-      this.currentMarkerIndex++;
-      this.updateCurrentMarker();
-    }
-  }
-
-  previousMarker() {
-    if (this.currentMarkerIndex > 0) {
-      this.currentMarkerIndex--;
-      this.updateCurrentMarker();
-    }
-  }
-
-  toggleMarkerEvaluations() {
-    this.showMarkerEvaluations = !this.showMarkerEvaluations;
   }
   
 }
