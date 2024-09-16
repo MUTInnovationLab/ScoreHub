@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-// import { catchError, of } from 'rxjs';
 import { forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+// import { Group } from '../services/group.service';
 
 interface User {
   email: string;
@@ -12,14 +12,20 @@ interface User {
   staffNumber: string;
 }
 
+export interface Group {
+  groupId: string;
+  groupName: string;
+}
+
+
 interface Marking {
-  markerEmail: any;
+  markerEmail: string;
   businessPlanScore: number;
   email: string;
   groupName: string;
   marketingPlanScore: number;
   webPageScore: number;
-  // markerEmail: string;
+  groupId: string;
 }
 
 @Component({
@@ -28,10 +34,11 @@ interface Marking {
   styleUrls: ['./rank.page.scss'],
 })
 export class RankPage implements OnInit {
-  top5Items: { rank: number, groupName: string, averageScore: number }[] = [];
+  top5Items: { rank: number; groupName: string; groupId: string; averageScore: number }[] = [];
   detailedReports: {
     email: string;
     groupName: string;
+    groupId: string; // Add groupId here
     businessPlanScore: number;
     marketingPlanScore: number;
     webPageScore: number;
@@ -58,110 +65,122 @@ export class RankPage implements OnInit {
   searchGroupName: string = '';
   searchMarkerEmail: string = '';
 
-  constructor(private firestore: AngularFirestore, private router: Router,) {}
+  constructor(private firestore: AngularFirestore, private router: Router) {}
 
   ngOnInit() {
     this.fetchRankings();
     this.fetchMarkersAndEvaluations();
   }
 
-  goBackToScore(){
+  goBackToScore() {
     this.router.navigate(['/score']);
   }
 
   deleteReport(index: number) {
-    // Find the actual report to delete from the original detailedReports array
     const reportToDelete = this.paginatedReports[index];
-  
-    // Remove the report from both the paginated reports and the detailedReports array
     this.detailedReports = this.detailedReports.filter(report => report !== reportToDelete);
     this.paginatedReports.splice(index, 1);
-  
-    // Update the averages after deletion
     this.calculateAverages();
-  }  
-
+  }
 
   fetchRankings() {
-    this.firestore.collection<Marking>('Marking').valueChanges()
-      .pipe(
-        catchError(error => {
-          console.error('Error fetching rankings:', error);
-          return of([]);
-        })
-      )
-      .subscribe((data: Marking[]) => {
-        this.detailedReports = data.map(item => ({
-          email: item.email,
-          groupName: item.groupName,
-          businessPlanScore: item.businessPlanScore,
-          marketingPlanScore: item.marketingPlanScore,
-          webPageScore: item.webPageScore,
-          averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore),
-          markerEmail: item.markerEmail
-        }));
+    // fetchGroupsAndRankings() {
+      // Fetch groups first
+      this.firestore.collection<Group>('Groups').valueChanges()
+        .pipe(
+          catchError(error => {
+            console.error('Error fetching groups:', error);
+            return of([]);
+          }),
+          map(groups => {
+            const groupMap = new Map<string, string>();
+            groups.forEach(group => groupMap.set(group.groupName, group.groupId));
+            return groupMap;
+          }),
+          switchMap(groupMap => 
+            this.firestore.collection<Marking>('Marking').valueChanges().pipe(
+              catchError(error => {
+                console.error('Error fetching rankings:', error);
+                return of([]);
+              }),
+              map(markings => {
+                return markings.map(marking => ({
+                  ...marking,
+                  groupId: groupMap.get(marking.groupName) || '' // Use groupId from the map
+                }));
+              })
+            )
+          )
+        )
+        .subscribe((data: Marking[]) => {
+          this.detailedReports = data.map(item => ({
+            email: item.email,
+            groupName: item.groupName,
+            groupId: item.groupId, // Add groupId here
+            businessPlanScore: item.businessPlanScore,
+            marketingPlanScore: item.marketingPlanScore,
+            webPageScore: item.webPageScore,
+            averageScore: this.calculateWeightedAverage(item.businessPlanScore, item.marketingPlanScore, item.webPageScore),
+            markerEmail: item.markerEmail
+          }));
   
-        this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
-        this.totalPages = this.uniqueGroups.length;
-        this.updatePaginatedReports();
-        this.calculateTop5();
-      });
-  }  
-  
-  calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
-    return (businessPlanScore + marketingPlanScore + webPageScore) ;
-  }
-  mapScoreToPercentage(score: number, thresholds: number[], percentages: number[]): number {
-    for (let i = thresholds.length - 1; i >= 0; i--) {
-      if (score >= thresholds[i]) {
-        return percentages[i];
-      }
+          this.uniqueGroups = [...new Set(this.detailedReports.map(item => item.groupName))];
+          this.totalPages = Math.ceil(this.uniqueGroups.length / this.pageSize); // Adjust totalPages calculation
+          this.updatePaginatedReports();
+          this.calculateTop5();
+        });
     }
-    return 0;
+  calculateWeightedAverage(businessPlanScore: number, marketingPlanScore: number, webPageScore: number): number {
+    return (businessPlanScore + marketingPlanScore + webPageScore); // Adjusted to average
   }
 
   calculateTop5() {
     const groupAverages = this.uniqueGroups.map(groupName => {
       const groupReports = this.detailedReports.filter(report => report.groupName === groupName);
       const totalAverageScore = groupReports.reduce((acc, report) => acc + report.averageScore, 0);
-      return { groupName, averageScore: totalAverageScore / groupReports.length };
+      return { 
+        groupName, 
+        groupId: groupReports[0]?.groupId, // Use groupId from the first report
+        averageScore: totalAverageScore / groupReports.length 
+      };
     });
-
+  
     this.top5Items = groupAverages
       .sort((a, b) => b.averageScore - a.averageScore)
-      .slice(0, 5)
       .map((item, index) => ({
         rank: index + 1,
         groupName: item.groupName,
+        groupId: item.groupId,
         averageScore: item.averageScore
       }));
   }
+  
+  
 
   updatePaginatedReports() {
     const currentGroupName = this.uniqueGroups[this.currentPage];
     this.paginatedReports = this.detailedReports.filter(report => report.groupName === currentGroupName);
     this.calculateAverages();
   }
+
   calculateAverages() {
     if (this.paginatedReports.length === 0) {
       this.averages = { businessPlanAvg: 0, marketingPlanAvg: 0, webPageAvg: 0, criterionAverage: 0 };
       return;
     }
-  
+
     const totalBusinessPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.businessPlanScore, 0);
     const totalMarketingPlanScore = this.paginatedReports.reduce((acc, report) => acc + report.marketingPlanScore, 0);
     const totalWebPageScore = this.paginatedReports.reduce((acc, report) => acc + report.webPageScore, 0);
     const totalReports = this.paginatedReports.length;
-  
+
     this.averages.businessPlanAvg = totalBusinessPlanScore / totalReports;
     this.averages.marketingPlanAvg = totalMarketingPlanScore / totalReports;
     this.averages.webPageAvg = totalWebPageScore / totalReports;
-  
-    // Calculate the overall average by adding all criterion averages and dividing by 3
+
     this.averages.criterionAverage = 
-      (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg);
+      (this.averages.businessPlanAvg + this.averages.marketingPlanAvg + this.averages.webPageAvg); // Adjusted to average
   }
-  
 
   searchDetailedReports() {
     if (this.searchGroupName.trim() === '') {
@@ -214,8 +233,36 @@ export class RankPage implements OnInit {
       this.currentMarkerName = currentMarker.markerName;
     } else {
       this.currentMarkerEvaluations = [];
-      this.currentMarkerName = '';
     }
+  }
+
+  viewEvaluations(markerName: string) {
+    const marker = this.markerEvaluations.find(e => e.markerName === markerName);
+    if (marker) {
+      this.currentMarkerEvaluations = marker.evaluations;
+      this.currentMarkerName = marker.markerName;
+      this.currentMarkerIndex = this.markerEvaluations.indexOf(marker);
+      this.showMarkerEvaluations = true;
+    }
+  }
+  
+  prevMarker() {
+    if (this.currentMarkerIndex > 0) {
+      this.currentMarkerIndex--;
+      this.updateCurrentMarker();
+    }
+  }
+
+  nextMarker() {
+    if (this.currentMarkerIndex < this.markerEvaluations.length - 1) {
+      this.currentMarkerIndex++;
+      this.updateCurrentMarker();
+    }
+  }
+
+  closeEvaluation() {
+    this.showMarkerEvaluations = false;
+    this.currentMarkerEvaluations = [];
   }
 
   previousPage() {
@@ -231,5 +278,4 @@ export class RankPage implements OnInit {
       this.updatePaginatedReports();
     }
   }
-  
 }

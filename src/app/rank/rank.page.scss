@@ -3,6 +3,12 @@ ion-content {
   --background: #006281; /* Use the blue color from your design */
 }
 
+@media (max-width: 768px) {
+  .ranking-table {
+    font-size: 14px;
+  }
+}
+
 /* Card Styles */
 ion-card {
   margin: 16px;
@@ -183,5 +189,36 @@ ion-row {
     --background: transparent; /* Remove background */
     --border: none; /* Remove border */
   }
+
+  // .top-5 {
+  //   background-color: #d4edda; /* Light green background */
+  //   color: #155724; /* Dark green text */
+  //   font-weight: bold;
+  // }
+
+//   /* rank.page.scss */
+// .top-5-item {
+//   background-color: #ffeb3b; /* Highlight color, adjust as needed */
+//   border: 2px solid #fbc02d; /* Border to make it stand out */
+//   padding: 10px;
+//   margin: 5px 0;
+//   border-radius: 5px;
+// }
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
   
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  .top-5-item {
+    background-color: #ffeb3b; /* Highlight color */
+    color: #000; /* Text color */
+  }
+}
+
 }

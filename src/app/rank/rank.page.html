@@ -1,34 +1,37 @@
 <ion-content>
-  <!-- Top 5 Rankings -->
   <ion-card *ngIf="!showMarkerEvaluations">
     <ion-card-header>
       <ion-button class="back-button" fill="clear" (click)="goBackToScore()">
         <ion-icon name="arrow-back" style="color: white;"></ion-icon>
       </ion-button>
       
-      <ion-card-title>Top 5 Rankings</ion-card-title>
+      <ion-card-title>Rankings</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-grid>
-      <table class="ranking-table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Group Name</th>
-            <th>Average Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of top5Items">
-            <td>{{ item.rank }}</td>
-            <td>{{ item.groupName }}</td>
-            <td>{{ item.averageScore | number: '1.2-2' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </ion-grid>
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Group Name</th>
+              <th>Group ID</th>
+              <th>Average Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of top5Items; let i = index" [ngClass]="{'top-5-item': i < 5}">
+              <td>{{ item.rank }}</td>
+              <td>{{ item.groupName }}</td>
+              <td>{{ item.groupId }}</td>
+              <td>{{ item.averageScore | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ion-grid>
     </ion-card-content>
   </ion-card>
+   
+  
 
   <!-- Detailed Reports Search Card -->
   <ion-card *ngIf="!showMarkerEvaluations">
