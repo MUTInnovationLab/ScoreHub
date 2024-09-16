@@ -19,7 +19,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of top5Items; let i = index" [ngClass]="{'top-5-item': i < 5}">
+            <tr *ngFor="let item of top5Items" 
+            [ngStyle]="{'background-color': item.rank <= 5 ? '#ffeb3b' : '', 'font-weight': item.rank <= 5 ? 'bold' : 'normal'}">
               <td>{{ item.rank }}</td>
               <td>{{ item.groupName }}</td>
               <td>{{ item.groupId }}</td>

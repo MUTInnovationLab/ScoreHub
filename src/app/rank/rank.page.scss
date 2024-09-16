@@ -205,20 +205,11 @@ ion-row {
 //   border-radius: 5px;
 // }
 
-.ranking-table {
-  width: 100%;
-  border-collapse: collapse;
-  
-  th, td {
-    padding: 8px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-
-  .top-5-item {
-    background-color: #ffeb3b; /* Highlight color */
-    color: #000; /* Text color */
-  }
+.highlight-top {
+  background-color: #ffd700; /* Gold background to highlight */
+  font-weight: bold;
+  color: #000;
 }
+
 
 }
